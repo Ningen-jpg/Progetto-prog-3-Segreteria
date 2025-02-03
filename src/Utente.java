@@ -1,9 +1,10 @@
 public abstract class Utente {
-    private int id;
+    private String id;
     private String nome;
     private String cognome;
 
-    public Utente(int id, String nome, String cognome) {
+    //factory method pattern
+    public Utente(String id, String nome, String cognome) {
         this.id = id;
         this.nome = nome;
         this.cognome = cognome;
