@@ -7,7 +7,7 @@ public class Studente extends Utente {
     private Date dataNascita;
     private String residenza;
     private List<Esame> esami; // lista degli esami del corso di appartenenza (per i voti)
-    private Corso pianoDiStudi; // indica il mio corso di laurea scelto
+    private CorsoDiLaurea pianoDiStudi; // indica il mio corso di laurea scelto
     private List<Esame> esamiSuperati;
     private List<Esame> esamiSostenuti; // in fase di valutazione
     private List<Esame> testCompletati;
@@ -16,6 +16,5 @@ public class Studente extends Utente {
     public Studente(String nome, String cognome, String matricola) {
         super(nome, cognome);
         this.matricola = matricola;
-
     }
 }
