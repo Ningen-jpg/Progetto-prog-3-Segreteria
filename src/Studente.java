@@ -3,7 +3,7 @@ import java.util.List;
 
 //stiamo usando il factory method pattern
 public class Studente extends Utente {
-    private String id; // chiave primaria
+    private String matricola; // chiave primaria
     private Date dataNascita;
     private String residenza;
     private List<Esame> esami; // lista degli esami del corso di appartenenza (per i voti)
