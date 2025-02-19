@@ -1,0 +1,5 @@
+matricola,nome,cognome,dataNascita,residenza,tasse,password
+0124001450,Marco,Rossi,1998-05-12,Napoli,true,password
+0124001500,Anna,Bianchi,2000-03-25,Napoli,false,password
+0123001675,Michele,Verdi,2005-03-12,Napoli,true,password
+0123001566,Chiara,Gialli,1996-16-08,Napoli,false,password
