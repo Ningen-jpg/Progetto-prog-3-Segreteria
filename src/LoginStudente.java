@@ -9,7 +9,7 @@ public class LoginStudente implements LoginUtente {
     @Override
     public void login(String username, String password) {
         // Connection to the server
-        try (final Connection connection = DriverManager.getConnection(
+        try (final Connection connection = DriverManager.getConnection
                 "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM studente WHERE matricola = ? AND password = ?")) {
