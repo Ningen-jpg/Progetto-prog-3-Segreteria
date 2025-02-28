@@ -17,6 +17,7 @@ public class LoginStudente implements LoginUtente {
             statement.setString(1, username);
             statement.setString(2, password);
 
+
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     System.out.println("Login successful!");
