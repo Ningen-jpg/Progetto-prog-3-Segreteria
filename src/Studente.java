@@ -11,6 +11,7 @@ public class Studente extends Utente {
     private List<Esame> esamiSostenuti;
     private List<Esame> testCompletati;
     private boolean tasse;
+    private String password;
 
     public Studente(String matricola,String password, String nome, String cognome) {
         super(matricola, password, nome, cognome);
@@ -86,7 +87,7 @@ public class Studente extends Utente {
         this.tasse = tasse;
     }
 
-    public void setPassword(String password) {}
+   // public void setPassword(String password) {}
 
     public String getPassword() {
         return password;
