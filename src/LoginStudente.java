@@ -7,9 +7,9 @@ import java.sql.PreparedStatement;
 public class LoginStudente implements LoginUtente {
 
     @Override
-    public void login(String username, String password) {
+    public boolean login(String username, String password) {
         // Connection to the server
-        try (final Connection connection = DriverManager.getConnection ("jdbc:postgresql://programmazione3-programmazio ne3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+        try (final Connection connection = DriverManager.getConnection ("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT * FROM studente WHERE matricola = ? AND password = ?")) {
 
@@ -21,7 +21,6 @@ public class LoginStudente implements LoginUtente {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     System.out.println("Login successful!");
-                    System.out.println("Version: " + resultSet.getString("version"));
                 } else {
                     System.out.println("Invalid username or password.");
                 }
@@ -30,5 +29,6 @@ public class LoginStudente implements LoginUtente {
             System.out.println("Connection failure.");
             e.printStackTrace();
         }
+        return false;
     }
 }

@@ -6,5 +6,5 @@ per il login
  */
 public interface LoginUtente {
 
-    void login(String username, String password);
+    boolean login(String username, String password);
 }
