@@ -35,25 +35,13 @@ public class Main extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                verificaCredenziali();
+                LoginUtente login = new LoginStudente();
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+                boolean risultato = login.login(username, password);
+
             }
         });
-    }
-
-    private void verificaCredenziali() {
-        String username = usernameField.getText();
-        String password = new String(passwordField.getPassword());
-
-        // Utilizzo della classe LoginStudente
-        LoginUtente login = new LoginStudente();
-        boolean risultato = login.login(username, password);
-
-        if (risultato) {
-            JOptionPane.showMessageDialog(this, "Login effettuato con successo!");
-            // Qui puoi aggiungere codice per aprire la finestra principale dell'applicazione
-        } else {
-            JOptionPane.showMessageDialog(this, "Username o password non validi!", "Errore", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     public static void main(String[] args) {
@@ -64,16 +52,3 @@ public class Main extends JFrame {
         });
     }
 }
-
-
-
-
-/*public class Main{
-    public static void main(String[] args){
-
-        LoginUtente loginButton = new LoginStudente();
-        loginButton.login("0124","123cc");
-
-    }
-
-}*/

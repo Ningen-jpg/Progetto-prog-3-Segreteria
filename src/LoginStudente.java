@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,9 +22,10 @@ public class LoginStudente implements LoginUtente {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    System.out.println("Login successful!");
+                    JOptionPane.showMessageDialog(null, "Login effettuato con successo!");
+                    return true;
                 } else {
-                    System.out.println("Invalid username or password.");
+                    JOptionPane.showMessageDialog(null, "Username o password non validi!", "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (SQLException e) {

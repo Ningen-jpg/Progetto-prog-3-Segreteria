@@ -11,11 +11,9 @@ public class Studente extends Utente {
     private List<Esame> esamiSostenuti;
     private List<Esame> testCompletati;
     private boolean tasse;
-    private String password;
 
-    public Studente(String nome, String cognome, String matricola) {
-        super(nome, cognome);
-        this.matricola = matricola;
+    public Studente(String matricola,String password, String nome, String cognome) {
+        super(matricola, password, nome, cognome);
     }
 
     // Getters e setters per tutti gli attributi
@@ -87,8 +85,10 @@ public class Studente extends Utente {
     public void setTasse(boolean tasse) {
         this.tasse = tasse;
     }
+
+    public void setPassword(String password) {}
+
     public String getPassword() {
         return password;
     }
-    public void setPassword(String password) {}
 }
