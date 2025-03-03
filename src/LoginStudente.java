@@ -26,7 +26,7 @@ public class LoginStudente implements LoginUtente {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Connection failure.");
+            System.out.println("Connection failure!!.");
             e.printStackTrace();
         }
         return false;
