@@ -8,6 +8,7 @@ public class Segreteria extends Utente {
         super(id,password,nome,cognome);
     }
 
+    //l'aggiunta della nuova tupla prevede l'attributo delle tasse come false di default
     public static void aggiungi_studente() {
         Scanner scanner = new Scanner(System.in);
 
@@ -74,6 +75,51 @@ public class Segreteria extends Utente {
             try {
                 if (statement != null) statement.close();
                 if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void visualizza_informazioni(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Inserisci la matricola: ");
+        String mat_da_ric = scanner.nextLine();
+
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try{
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
+            );
+
+            String query = "SELECT * FROM studente WHERE matricola = ?";
+            statement = conn.prepareStatement(query);
+            statement.setString(1, mat_da_ric);
+
+            rs = statement.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Matricola: " + rs.getString("matricola"));
+                System.out.println("Nome: " + rs.getString("nome"));
+                System.out.println("Cognome: " + rs.getString("cognome"));
+                System.out.println("Data di nascita: " + rs.getDate("data_nascita"));
+                System.out.println("Residenza: " + rs.getString("residenza"));
+                System.out.println("Tasse pagate: " + (rs.getBoolean("tasse")));
+            } else {
+                System.out.println("Nessuno studente trovato con la matricola specificata.");
+            }
+
+        }catch (SQLException e) {
+            System.out.println("Errore durante la visualizzazione delle informazioni: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }

@@ -51,11 +51,15 @@ public class Main extends JFrame {
         SwingUtilities.invokeLater(() -> {
             Main loginFrame = new Main();
             loginFrame.setVisible(true);
-            ytuyt
         });
 */
+        /*
         System.out.println("inizio inserimento studente");
         Segreteria.aggiungi_studente();
+        */
+        System.out.println("visualizzo le informazioni di uno studente");
+        Segreteria.visualizza_informazioni();
+
 
     }
 }
