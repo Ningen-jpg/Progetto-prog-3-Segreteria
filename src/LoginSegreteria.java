@@ -13,7 +13,7 @@ public class LoginSegreteria implements LoginUtente {
         // Connection to the server
         try (final Connection connection = DriverManager.getConnection ("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
              PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM segreteria WHERE matricola = ? AND password = ?")) {
+                     "SELECT * FROM segreteria WHERE id = ? AND password = ?")) {
 
             // Set the parameters for the prepared statement
             statement.setString(1, username);

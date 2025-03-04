@@ -1,6 +1,6 @@
 public class ConcreteUtenteFactory {
     //implementazione del factory method pattern
-    public static Utente getUtente (String tipoUtente, String matricola, String nome, String cognome)
+    public static Utente getUtente (String tipoUtente, String id,String password, String nome, String cognome)
     {
         if (tipoUtente == null)
         {
@@ -10,11 +10,11 @@ public class ConcreteUtenteFactory {
         switch(tipoUtente.toLowerCase())
         {
             case "studente":
-                return new Studente(matricola, nome, cognome);
+                return new Studente(id,password, nome, cognome);
             case "docente":
-                return new Docente(matricola, nome, cognome);
+                return new Docente(id,password, nome, cognome);
             case "segreteria":
-                return new Segreteria(matricola, nome, cognome);
+                return new Segreteria(id, password, nome, cognome);
             default:
                 return null;
 

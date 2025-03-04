@@ -36,6 +36,7 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginUtente login = new LoginStudente();
+               // LoginDocente login = new LoginDocente();
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 boolean risultato = login.login(username, password);
