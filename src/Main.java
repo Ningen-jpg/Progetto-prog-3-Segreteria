@@ -51,6 +51,7 @@ public class Main extends JFrame {
         SwingUtilities.invokeLater(() -> {
             Main loginFrame = new Main();
             loginFrame.setVisible(true);
+            ytuyt
         });
 */
         System.out.println("inizio inserimento studente");
