@@ -47,9 +47,14 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         // Esecuzione dell'applicazione nel thread EDT
+        /*
         SwingUtilities.invokeLater(() -> {
             Main loginFrame = new Main();
             loginFrame.setVisible(true);
         });
+*/
+        System.out.println("inizio inserimento studente");
+        Segreteria.aggiungi_studente();
+
     }
 }

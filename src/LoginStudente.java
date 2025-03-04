@@ -7,30 +7,46 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
 public class LoginStudente implements LoginUtente {
-
     @Override
     public boolean login(String username, String password) {
-        // Connection to the server
-        try (final Connection connection = DriverManager.getConnection ("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-             PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM studente WHERE matricola = ? AND password = ?")) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Connection to the server
+            connection = DriverManager.getConnection(
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
+            );
+
+            statement = connection.prepareStatement(
+                    "SELECT * FROM studente WHERE matricola = ? AND password = ?"
+            );
 
             // Set the parameters for the prepared statement
             statement.setString(1, username);
             statement.setString(2, password);
 
+            resultSet = statement.executeQuery();
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    JOptionPane.showMessageDialog(null, "Login effettuato con successo!");
-                    return true;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Username o password non validi!", "Errore", JOptionPane.ERROR_MESSAGE);
-                }
+            if (resultSet.next()) {
+                JOptionPane.showMessageDialog(null, "Login effettuato con successo!");
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Username o password non validi!", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } catch (SQLException e) {
-            System.out.println("Connection failure!!.");
+            System.out.println("Connection failure!!");
             e.printStackTrace();
+        } finally {
+            // Chiusura esplicita delle risorse
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
