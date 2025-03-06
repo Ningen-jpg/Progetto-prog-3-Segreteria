@@ -52,11 +52,13 @@ public class Main extends JFrame {
             Main loginFrame = new Main();
             loginFrame.setVisible(true);
         });
-*/
+        */
+
         /*
         System.out.println("inizio inserimento studente");
         Segreteria.aggiungi_studente();
         */
+
         System.out.println("visualizzo le informazioni di uno studente");
         Segreteria.visualizza_informazioni();
 

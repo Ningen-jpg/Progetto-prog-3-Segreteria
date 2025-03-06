@@ -1,8 +1,7 @@
-import javax.swing.*;
 import java.sql.*;
 import java.util.Scanner;
-import java.text.*;
 
+@SuppressWarnings("ALL")
 public class Segreteria extends Utente {
     public Segreteria(String id,String password,  String nome, String cognome) {
         super(id,password,nome,cognome);
@@ -125,5 +124,6 @@ public class Segreteria extends Utente {
             }
         }
     }
-}
 
+    public static void visualizza_esiti(){} //da implementare
+}
