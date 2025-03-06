@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Scanner;
 
 public class Main extends JFrame {
 
@@ -47,20 +48,28 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         // Esecuzione dell'applicazione nel thread EDT
+
         /*
         SwingUtilities.invokeLater(() -> {
             Main loginFrame = new Main();
             loginFrame.setVisible(true);
         });
-        */
+*/
 
-        /*
-        System.out.println("inizio inserimento studente");
-        Segreteria.aggiungi_studente();
-        */
+        LoginSegreteria login = new LoginSegreteria();
+        System.out.println("Inserisci ID");
+        Scanner scanner = new Scanner(System.in);
+        String id = scanner.nextLine();
+        System.out.println("Inserisci password");
+        String password = scanner.nextLine();
 
-        System.out.println("visualizzo le informazioni di uno studente");
-        Segreteria.visualizza_informazioni();
+        login.login(id,password);
+
+        //ho appena fatto il login
+
+        //ConcreteUtenteFactory.getUtente("segreteria",id);
+      //  System.out.println("visualizzo le informazioni di uno studente");
+       // Segreteria.visualizza_informazioni();
 
 
     }

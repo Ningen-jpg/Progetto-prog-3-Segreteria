@@ -12,7 +12,5 @@ public abstract class Utente {
         this.cognome = cognome;
     }
 
-    // secondo costruttore per la segreteria
-    public Utente(String nome, String cognome) {
-    }
+
 }

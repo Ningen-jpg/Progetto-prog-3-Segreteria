@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -31,6 +30,7 @@ public class LoginStudente implements LoginUtente {
 
             if (resultSet.next()) {
                 JOptionPane.showMessageDialog(null, "Login effettuato con successo!");
+
                 return true;
             } else {
                 JOptionPane.showMessageDialog(null, "Username o password non validi!", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -44,6 +44,7 @@ public class LoginStudente implements LoginUtente {
                 if (resultSet != null) resultSet.close();
                 if (statement != null) statement.close();
                 if (connection != null) connection.close();
+                System.out.println("Connection closed!!");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
