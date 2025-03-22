@@ -56,20 +56,21 @@ public class Main extends JFrame {
         });
 */
 
+        /*
         LoginSegreteria login = new LoginSegreteria();
         System.out.println("Inserisci ID");
         Scanner scanner = new Scanner(System.in);
         String id = scanner.nextLine();
-        System.out.println("Inserisci password");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine();        System.out.println("Inserisci password");
+*/
 
-        login.login(id,password);
+        //login.login(id,password);
 
         //ho appena fatto il login
 
         //ConcreteUtenteFactory.getUtente("segreteria",id);
-      //  System.out.println("visualizzo le informazioni di uno studente");
-       // Segreteria.visualizza_informazioni();
+       System.out.println("visualizzo le informazioni di uno studente");
+        Segreteria.visualizza_informazioni();
 
 
     }

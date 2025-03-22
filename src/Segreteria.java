@@ -125,5 +125,8 @@ public class Segreteria extends Utente {
         }
     }
 
-    public static void visualizza_esiti(){} //da implementare
+    public static void visualizza_esiti(){
+      //visualizzare o stampare gli esiti dei test per
+        // singolo corso e per un intero Corso di Laurea (aggregazione delle valutazioni)
+    } //da implementare
 }
