@@ -75,7 +75,6 @@ public class Main extends JFrame {
         Utente prof = ConcreteUtenteFactory.getUtente("docente","1122","123cc","Filippo","Bonomi");
 
 
-
        ((Docente) prof).inserisci_appello();
 
 
