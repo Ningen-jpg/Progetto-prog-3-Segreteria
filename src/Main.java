@@ -71,7 +71,7 @@ public class Main extends JFrame {
       //  System.out.println("visualizzo le informazioni di uno studente");
        // Segreteria.visualizza_informazioni();
 
-        Segreteria.visualizza_esiti();
+        Segreteria.visualizza_esiti_corso();
 
     }
 }
