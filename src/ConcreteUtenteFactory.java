@@ -7,12 +7,16 @@ public class ConcreteUtenteFactory {
             return null;
         }
 
-        return switch (tipoUtente.toLowerCase()) {
-            case "studente" -> new Studente(id, password, nome, cognome);
-            case "docente" -> new Docente(id, password, nome, cognome);
-            case "segreteria" -> new Segreteria(id, password, nome, cognome);
-            default -> null;
-        };
+        switch (tipoUtente.toLowerCase()) {
+            case "studente":
+                return new Studente(id, password, nome, cognome);
+            case "docente":
+                return new Docente(id, password, nome, cognome); // Ritorna direttamente un Docente
+            case "segreteria":
+                return new Segreteria(id, password, nome, cognome);
+            default:
+                throw new IllegalArgumentException("Tipo di utente non valido");
+        }
     }
 }
 

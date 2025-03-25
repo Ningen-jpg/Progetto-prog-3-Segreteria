@@ -57,9 +57,9 @@ public class Main extends JFrame {
 */
 
         //LoginSegreteria login = new LoginSegreteria();
-        //System.out.println("Inserisci ID");
+        System.out.println("Inserisci ID");
         Scanner scanner = new Scanner(System.in);
-        //String id = scanner.nextLine();
+        String id = scanner.nextLine();
         //System.out.println("Inserisci password");
         //String password = scanner.nextLine();
 
@@ -71,7 +71,14 @@ public class Main extends JFrame {
       //  System.out.println("visualizzo le informazioni di uno studente");
        // Segreteria.visualizza_informazioni();
 
-        Segreteria.visualizza_esiti_corso();
+        //Segreteria.visualizza_esiti_corso();
+        Utente prof = ConcreteUtenteFactory.getUtente("docente","1122","123cc","Filippo","Bonomi");
+
+
+
+       ((Docente) prof).inserisci_appello();
+
+
 
     }
 }

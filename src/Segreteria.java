@@ -7,6 +7,10 @@ public class Segreteria extends Utente {
         super(id,password,nome,cognome);
     }
 
+    public String getID(){
+        return id;
+    }
+
     //l'aggiunta della nuova tupla prevede l'attributo delle tasse come false di default
     public static void aggiungi_studente() {
         Scanner scanner = new Scanner(System.in);

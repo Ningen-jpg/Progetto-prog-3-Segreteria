@@ -1,5 +1,5 @@
 public abstract class Utente {
-    private String id;
+    protected String id;
     private String nome;
     private String cognome;
     private String password;
@@ -11,6 +11,7 @@ public abstract class Utente {
         this.nome = nome;
         this.cognome = cognome;
     }
+    public abstract String getID();
 
 
 }

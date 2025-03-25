@@ -17,6 +17,10 @@ public class Studente extends Utente {
         super(matricola, password, nome, cognome);
     }
 
+    public String getID()
+    {
+        return id;
+    }
     // Getters e setters per tutti gli attributi
 
     public String getMatricola() {
