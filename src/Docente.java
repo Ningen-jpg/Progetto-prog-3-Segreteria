@@ -163,6 +163,7 @@ public class Docente extends Utente{
 
             //Attende la conferma
             boolean confermato;
+            //qui devi richiamare il metodo per ottenere la conferma, chiaro ?
 
             if (!confermato) {
                 System.out.println("Lo Studente ha rifiutato, eliminazione voto...");
