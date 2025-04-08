@@ -332,7 +332,123 @@ public class Studente extends Utente {
         }
     }
 
-    // Da implementare
+    // Implementazione del metodo effettuaTest
     public void effettuaTest() {
+        Scanner scanner = new Scanner(System.in);
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+
+            // Recupera gli esami per cui lo studente è prenotato
+            String queryPrenotazioni = "SELECT esame.id, esame.nome, appello.id AS id_appello, appello.data " +
+                    "FROM Prenotazione " +
+                    "JOIN appello ON Prenotazione.appello_fk = appello.id " +
+                    "JOIN esame ON appello.esame_fk = esame.id " +
+                    "WHERE Prenotazione.studente_fk = ? " +
+                    "ORDER BY appello.data";
+
+            statement = conn.prepareStatement(queryPrenotazioni);
+            statement.setString(1, this.matricola);
+            rs = statement.executeQuery();
+
+            List<String> appelliPrenotati = new ArrayList<>();
+            System.out.println("\n=== Esami per cui sei prenotato ===");
+            boolean trovatiEsami = false;
+
+            while (rs.next()) {
+                trovatiEsami = true;
+                String idEsame = rs.getString("id");
+                String nomeEsame = rs.getString("nome");
+                String idAppello = rs.getString("id_appello");
+                String dataAppello = rs.getString("data");
+
+                appelliPrenotati.add(idAppello);
+                System.out.println("ID Appello: " + idAppello + " | Esame: " + nomeEsame + " (ID: " + idEsame
+                        + ") | Data appello: " + dataAppello);
+            }
+
+            if (!trovatiEsami) {
+                System.out.println("Non sei prenotato per nessun esame. Effettua prima una prenotazione.");
+                return;
+            }
+
+            System.out.print("\nInserisci l'ID dell'appello per cui vuoi effettuare il test: ");
+            String idAppelloScelto = scanner.nextLine();
+
+            if (!appelliPrenotati.contains(idAppelloScelto)) {
+                System.out.println("ID appello non valido o non sei prenotato per questo appello!");
+                return;
+            }
+
+            // Recupera l'ID dell'esame per questo appello
+            String queryEsame = "SELECT esame.id, esame.nome FROM Prenotazione " +
+                    "JOIN appello ON Prenotazione.appello_fk = appello.id " +
+                    "JOIN esame ON appello.esame_fk = esame.id " +
+                    "WHERE Prenotazione.studente_fk = ? AND appello.id = ?";
+            statement = conn.prepareStatement(queryEsame);
+            statement.setString(1, this.matricola);
+            statement.setString(2, idAppelloScelto);
+            rs = statement.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("Errore: esame non trovato!");
+                return;
+            }
+            String idEsame = rs.getString("id");
+            String nomeEsame = rs.getString("nome");
+
+            // Chiedi allo studente se vuole effettuare il test
+            System.out.print("\nVuoi effettuare il test per " + nomeEsame + "? (si/no): ");
+            String risposta = scanner.nextLine().toLowerCase();
+
+            if (risposta.equals("si")) {
+                // Inserisci l'esito con voto = 0 e conferma = false
+                String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
+                statement = conn.prepareStatement(insertEsito);
+                statement.setString(1, idAppelloScelto);
+                statement.setString(2, this.matricola);
+                statement.executeUpdate();
+
+                // Rimuovi la prenotazione
+                String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                statement = conn.prepareStatement(deletePrenotazione);
+                statement.setString(1, idAppelloScelto);
+                statement.setString(2, this.matricola);
+                statement.executeUpdate();
+
+                System.out.println(
+                        "Hai effettuato il test e sei stato registrato per l'esame. Attendi il voto del docente.");
+            } else if (risposta.equals("no")) {
+                // Rimuovi solo la prenotazione
+                String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                statement = conn.prepareStatement(deletePrenotazione);
+                statement.setString(1, idAppelloScelto);
+                statement.setString(2, this.matricola);
+                statement.executeUpdate();
+
+                System.out.println("Hai annullato la prenotazione per questo esame.");
+            } else {
+                System.out.println("Risposta non valida. Operazione annullata.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Errore durante l'esecuzione del test: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -55,15 +55,16 @@ public class Main extends JFrame {
         docenteSubject.addObserver(observer);
 
         // Login come docente
-        System.out.println("\n=== Accesso come DOCENTE ===");
-        System.out.println("Inserisci ID docente: ");
-        String idDocente = scanner.nextLine();
-        System.out.println("Inserisci password docente: ");
-        String pwDocente = scanner.nextLine();
+        // System.out.println("\n=== Accesso come DOCENTE ===");
+        // System.out.println("Inserisci ID docente: ");
+        // String idDocente = scanner.nextLine();
+        // System.out.println("Inserisci password docente: ");
+        // String pwDocente = scanner.nextLine();
 
-        Utente prof = ConcreteUtenteFactory.getUtente("docente", idDocente, pwDocente, "Filippo", "Bonomi");
-        ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
-        ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
+        // Utente prof = ConcreteUtenteFactory.getUtente("docente", idDocente,
+        // pwDocente, "Filippo", "Bonomi");
+        // ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
+        // ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
 
         // Login come studente
         System.out.println("\n=== Accesso come STUDENTE ===");
@@ -73,7 +74,9 @@ public class Main extends JFrame {
         String pwStudente = scanner.nextLine();
 
         Utente stud = ConcreteUtenteFactory.getUtente("studente", matricola, pwStudente, "Alessandro", "Guadagnuolo");
-        ((Studente) stud).setObserver(observer);
-        ((Studente) stud).valutaVoto();
+        // ((Studente) stud).setObserver(observer);
+        // ((Studente) stud).valutaVoto();
+
+        ((Studente) stud).effettuaTest();
     }
 }
