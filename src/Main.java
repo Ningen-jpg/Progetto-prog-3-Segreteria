@@ -37,7 +37,7 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginUtente login = new LoginStudente();
-               // LoginDocente login = new LoginDocente();
+                // LoginDocente login = new LoginDocente();
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 boolean risultato = login.login(username, password);
@@ -47,37 +47,33 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Esecuzione dell'applicazione nel thread EDT
-
-        /*
-        SwingUtilities.invokeLater(() -> {
-            Main loginFrame = new Main();
-            loginFrame.setVisible(true);
-        });
-*/
-
-        //LoginSegreteria login = new LoginSegreteria();
-        System.out.println("Inserisci ID");
         Scanner scanner = new Scanner(System.in);
-        String id = scanner.nextLine();
-        //System.out.println("Inserisci password");
-        //String password = scanner.nextLine();
 
-        //login.login(id,password);
+        // Creiamo l'observer e il subject per le notifiche in tempo reale
+        StudenteObserver observer = new StudenteObserver();
+        DocenteSubject docenteSubject = new DocenteSubject();
+        docenteSubject.addObserver(observer);
 
-        //ho appena fatto il login
+        // Login come docente
+        System.out.println("\n=== Accesso come DOCENTE ===");
+        System.out.println("Inserisci ID docente: ");
+        String idDocente = scanner.nextLine();
+        System.out.println("Inserisci password docente: ");
+        String pwDocente = scanner.nextLine();
 
-        //ConcreteUtenteFactory.getUtente("segreteria",id);
-      //  System.out.println("visualizzo le informazioni di uno studente");
-       // Segreteria.visualizza_informazioni();
+        Utente prof = ConcreteUtenteFactory.getUtente("docente", idDocente, pwDocente, "Filippo", "Bonomi");
+        ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
+        ((Docente) prof).inserisci_voto(idDocente, docenteSubject);
 
-        //Segreteria.visualizza_esiti_corso();
-        Utente prof = ConcreteUtenteFactory.getUtente("docente","1122","123cc","Filippo","Bonomi");
+        // Login come studente
+        System.out.println("\n=== Accesso come STUDENTE ===");
+        System.out.println("Inserisci matricola studente: ");
+        String matricola = scanner.nextLine();
+        System.out.println("Inserisci password studente: ");
+        String pwStudente = scanner.nextLine();
 
-
-       ((Docente) prof).inserisci_appello();
-
-
-
+        Utente stud = ConcreteUtenteFactory.getUtente("studente", matricola, pwStudente, "Alessandro", "Guadagnuolo");
+        ((Studente) stud).setObserver(observer);
+        ((Studente) stud).valutaVoto();
     }
 }

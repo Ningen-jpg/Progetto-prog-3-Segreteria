@@ -2,5 +2,5 @@ import java.util.ArrayList;
 import java.util.List;
 
 interface Observer {
-    void update(String mat, String nome, int voto);
+    void update(String matricola, String esame, String voto, String data);
 }

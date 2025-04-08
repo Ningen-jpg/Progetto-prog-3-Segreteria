@@ -6,12 +6,13 @@ public class ConcreteUtenteFactory {
         {
             return null;
         }
-
+        String n = nome;
+        String c = cognome;
         switch (tipoUtente.toLowerCase()) {
             case "studente":
                 return new Studente(id, password, nome, cognome);
             case "docente":
-                return new Docente(id, password, nome, cognome); // Ritorna direttamente un Docente
+                return new Docente(id, password, nome, cognome);
             case "segreteria":
                 return new Segreteria(id, password, nome, cognome);
             default:
@@ -19,7 +20,3 @@ public class ConcreteUtenteFactory {
         }
     }
 }
-
-/*andrebbe snellita nel caso volessimo rispettare solo i requisiti del progetto
-poichè attualmente verrebbe usata solo per l'inserimento di un NUOVO "studente"
- */
