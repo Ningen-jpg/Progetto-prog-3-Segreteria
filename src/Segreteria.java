@@ -3,15 +3,16 @@ import java.util.Scanner;
 
 @SuppressWarnings("ALL")
 public class Segreteria extends Utente {
-    public Segreteria(String id,String password,  String nome, String cognome) {
-        super(id,password,nome,cognome);
+    public Segreteria(String id, String password, String nome, String cognome) {
+        super(id, password, nome, cognome);
     }
 
-    public String getID(){
+    public String getID() {
         return id;
     }
 
-    //l'aggiunta della nuova tupla prevede l'attributo delle tasse come false di default
+    // l'aggiunta della nuova tupla prevede l'attributo delle tasse come false di
+    // default
     public static void aggiungi_studente() {
         Scanner scanner = new Scanner(System.in);
 
@@ -40,11 +41,11 @@ public class Segreteria extends Utente {
         try {
             // Stabilisci la connessione al database
             connection = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
-            );
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
             // Query unica che inserisce solo se la matricola non esiste
-            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, residenza, tasse, password) " +
+            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, residenza, tasse, password) "
+                    +
                     "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                     "ON CONFLICT (matricola) DO NOTHING";
 
@@ -76,27 +77,25 @@ public class Segreteria extends Utente {
         } finally {
             // Chiusura delle risorse
             try {
-                if (statement != null) statement.close();
-                if (connection != null) connection.close();
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void visualizza_informazioni(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Inserisci la matricola: ");
-        String mat_da_ric = scanner.nextLine();
-
+    public static String visualizza_informazioni(String mat_da_ric) {
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
+        StringBuilder result = new StringBuilder();
 
-        try{
+        try {
             conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
-            );
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
             String query = "SELECT * FROM studente WHERE matricola = ?";
             statement = conn.prepareStatement(query);
@@ -105,45 +104,48 @@ public class Segreteria extends Utente {
             rs = statement.executeQuery();
 
             if (rs.next()) {
-                System.out.println("Matricola: " + rs.getString("matricola"));
-                System.out.println("Nome: " + rs.getString("nome"));
-                System.out.println("Cognome: " + rs.getString("cognome"));
-                System.out.println("Data di nascita: " + rs.getDate("data_nascita"));
-                System.out.println("Residenza: " + rs.getString("residenza"));
-                System.out.println("Tasse pagate: " + (rs.getBoolean("tasse")));
+                result.append("Matricola: ").append(rs.getString("matricola")).append("\n");
+                result.append("Nome: ").append(rs.getString("nome")).append("\n");
+                result.append("Cognome: ").append(rs.getString("cognome")).append("\n");
+                result.append("Data di nascita: ").append(rs.getDate("data_nascita")).append("\n");
+                result.append("Residenza: ").append(rs.getString("residenza")).append("\n");
+                result.append("Tasse pagate: ").append(rs.getBoolean("tasse")).append("\n");
             } else {
-                System.out.println("Nessuno studente trovato con la matricola specificata.");
+                result.append("Nessuno studente trovato con la matricola specificata.");
             }
 
-        }catch (SQLException e) {
-            System.out.println("Errore durante la visualizzazione delle informazioni: " + e.getMessage());
+        } catch (SQLException e) {
+            result.append("Errore durante la visualizzazione delle informazioni: ").append(e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (statement != null) statement.close();
-                if (conn != null) conn.close();
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+                if (conn != null)
+                    conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return result.toString();
     }
 
-    public static void visualizza_esiti(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Inserisci il nome dell'esame: ");
-        String esame_da_ric = scanner.nextLine();
+    public static String visualizza_esiti(String esame_da_ric) {
         esame_da_ric = esame_da_ric.toUpperCase();
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
+        StringBuilder result = new StringBuilder();
 
-        try{
+        try {
             conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
-            );
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            String query = "SELECT esame.nome, appello.data, studente.matricola, studente.nome as st_nome, studente.cognome, esito.voto " +
+            String query = "SELECT esame.nome, appello.data, studente.matricola, studente.nome as st_nome, studente.cognome, esito.voto "
+                    +
                     "FROM esito " +
                     "JOIN appello ON esito.appello_fk = appello.ID " +
                     "JOIN esame ON appello.esame_fk = esame.ID " +
@@ -158,46 +160,48 @@ public class Segreteria extends Utente {
             boolean esitiTrovati = false;
             while (rs.next()) {
                 esitiTrovati = true;
-                System.out.println("Esame: " + rs.getString("nome"));
-                System.out.println("Data Appello: " + rs.getDate("data"));
-                System.out.println("Matricola: " + rs.getString("matricola"));
-                System.out.println("Nome: " + rs.getString("st_nome"));
-                System.out.println("Cognome: " + rs.getString("cognome"));
-                System.out.println("Voto: " + rs.getInt("voto"));
-                System.out.println("---------------------------");
+                result.append("Esame: ").append(rs.getString("nome")).append("\n");
+                result.append("Data Appello: ").append(rs.getDate("data")).append("\n");
+                result.append("Matricola: ").append(rs.getString("matricola")).append("\n");
+                result.append("Nome: ").append(rs.getString("st_nome")).append("\n");
+                result.append("Cognome: ").append(rs.getString("cognome")).append("\n");
+                result.append("Voto: ").append(rs.getString("voto")).append("\n");
+                result.append("---------------------------\n");
             }
 
             if (!esitiTrovati) {
-                System.out.println("Nessun esito trovato per la ricerca.");
+                result.append("Nessun esito trovato per la ricerca.");
             }
 
         } catch (SQLException e) {
-            System.out.println("Errore durante la visualizzazione degli esiti: " + e.getMessage());
+            result.append("Errore durante la visualizzazione degli esiti: ").append(e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (statement != null) statement.close();
-                if (conn != null) conn.close();
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+                if (conn != null)
+                    conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return result.toString();
     }
 
-    public static void visualizza_esiti_corso() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Inserisci il nome del corso di studi ");
-        String corso_da_ric = scanner.nextLine();
-        corso_da_ric = corso_da_ric;
+    public static String visualizza_esiti_corso(String corso_da_ric) {
+        corso_da_ric = corso_da_ric.toUpperCase();
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
+        StringBuilder result = new StringBuilder();
 
         try {
             conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei"
-            );
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
             String query = "SELECT corsodilaurea.nome AS corso_nome, esame.nome AS esame_nome, appello.data, " +
                     "studente.matricola, studente.nome AS studente_nome, studente.cognome, esito.voto " +
@@ -216,31 +220,36 @@ public class Segreteria extends Utente {
             boolean esitiTrovati = false;
             while (rs.next()) {
                 esitiTrovati = true;
-                System.out.println("Corso di Laurea: " + rs.getString("corso_nome"));
-                System.out.println("Esame: " + rs.getString("esame_nome"));
-                System.out.println("Data Appello: " + rs.getDate("data"));
-                System.out.println("Matricola: " + rs.getString("matricola"));
-                System.out.println("Nome: " + rs.getString("studente_nome"));
-                System.out.println("Cognome: " + rs.getString("cognome"));
-                System.out.println("Voto: " + rs.getInt("voto"));
-                System.out.println("---------------------------");
+                result.append("Corso di Laurea: ").append(rs.getString("corso_nome")).append("\n");
+                result.append("Esame: ").append(rs.getString("esame_nome")).append("\n");
+                result.append("Data Appello: ").append(rs.getDate("data")).append("\n");
+                result.append("Matricola: ").append(rs.getString("matricola")).append("\n");
+                result.append("Nome: ").append(rs.getString("studente_nome")).append("\n");
+                result.append("Cognome: ").append(rs.getString("cognome")).append("\n");
+                result.append("Voto: ").append(rs.getString("voto")).append("\n");
+                result.append("---------------------------\n");
             }
 
             if (!esitiTrovati) {
-                System.out.println("Nessun esito trovato per la ricerca.");
+                result.append("Nessun esito trovato per la ricerca.");
             }
 
         } catch (SQLException e) {
-            System.out.println("Errore durante la visualizzazione degli esiti: " + e.getMessage());
+            result.append("Errore durante la visualizzazione degli esiti: ").append(e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (statement != null) statement.close();
-                if (conn != null) conn.close();
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+                if (conn != null)
+                    conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return result.toString();
     }
 }
