@@ -13,20 +13,15 @@ public class NotificationService implements Mediator {
 
     // verrà richiamato dai Docenti
     @Override
-    public void inviaVoto(DocenteSubject docenteSubject) {
-        Scanner scanner = new Scanner(System.in);
-
-        String matricola = scanner.nextLine();
-        String voto = scanner.nextLine();
-        String nomeEsame = scanner.nextLine();
-        String nomeDocente = scanner.nextLine();
-        String cognomeDocente = scanner.nextLine();
+    public void inviaVoto(String matricola, String voto, String nomeEsame, String nomeDocente, String cognomeDocente) {
 
         if (partecipanti.containsKey(matricola)) {
             Observer studente = partecipanti.get(matricola);
+            //da sistemare con l'aggiunta di abbellimenti per le stringhe
             studente.update(nomeEsame, nomeDocente, cognomeDocente, voto);
         } else {
             System.out.println("Errore: Studente non trovato.");
         }
+
     }
 }
