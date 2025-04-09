@@ -85,16 +85,8 @@ public class Docente extends Utente {
     }
 
     //mediator pattern implementato
-    public void inserisci_voto(String id, DocenteSubject docenteSubject) {
-     Scanner scanner = new Scanner(System.in);
-     System.out.print("Seleziona la matricola dello studente: ");
-     String matricola = scanner.nextLine();
+    public void inserisci_voto(DocenteSubject docenteSubject) {
 
-     System.out.print("Inserisci il nome dell'esame: ");
-     String nomeEsame = scanner.nextLine();
-     System.out.print("Inserisci il voto: ");
-     String voto = scanner.nextLine();
-
-     mediator.inviaVoto(id,nomeEsame,voto,docenteSubject,matricola);
+     mediator.inviaVoto(docenteSubject);
     }
 }

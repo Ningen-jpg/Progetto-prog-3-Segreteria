@@ -8,14 +8,11 @@ public class App {
     // Frame principale dell'applicazione che mostra i pulsanti per scegliere il
     // tipo di utente (Studente/Docente/Segreteria)
     private static JFrame mainFrame;
-    // Frame che gestisce il login e le funzionalità dello studente (visualizzazione
-    // esami, iscrizione, ecc.)
+    // Frame che gestisce il login e le funzionalità dello studente
     private static JFrame studenteFrame;
-    // Frame che gestisce il login e le funzionalità del docente (gestione esami,
-    // voti, ecc.)
+    // Frame che gestisce il login e le funzionalità del docente
     private static JFrame docenteFrame;
-    // Frame che gestisce il login e le funzionalità della segreteria (gestione
-    // studenti, visualizzazione dati, ecc.)
+    // Frame che gestisce il login e le funzionalità della segreteria
     private static JFrame segreteriaFrame;
     private static DefaultTableModel studentiTableModel;
     private static JTable studentiTable;
