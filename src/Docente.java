@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class Docente extends Utente {
     private Mediator mediator;
@@ -14,11 +15,19 @@ public class Docente extends Utente {
     }
 
     public void inserisci_appello() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Inserisci il nome dell'esame: ");
-        String esame_nome = scanner.nextLine();
-        System.out.print("Inserisci la data dell'appello (YYYY-MM-DD): ");
-        String data_appello = scanner.nextLine();
+        // Utilizzo JOptionPane invece di Scanner per l'interfaccia grafica
+        String esame_nome = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:");
+        if (esame_nome == null || esame_nome.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Operazione annullata", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        esame_nome = esame_nome.toUpperCase();
+        
+        String data_appello = JOptionPane.showInputDialog(null, "Inserisci la data dell'appello (YYYY-MM-DD):");
+        if (data_appello == null || data_appello.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Operazione annullata", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
         Connection conn = null;
         PreparedStatement statement = null;
@@ -35,7 +44,7 @@ public class Docente extends Utente {
             rs = statement.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("Errore: Esame non trovato.");
+                JOptionPane.showMessageDialog(null, "Errore: Esame non trovato.", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -48,7 +57,8 @@ public class Docente extends Utente {
             // Controlliamo che il docente loggato sia effettivamente il docente di
             // quell'esame
             if (!this.getID().equals(docenteID)) {
-                System.out.println("Errore: Non sei il docente di questo esame. Operazione negata.");
+                JOptionPane.showMessageDialog(null, "Errore: Non sei il docente di questo esame. Operazione negata.", 
+                        "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -62,13 +72,14 @@ public class Docente extends Utente {
 
             int rowsInserted = statement.executeUpdate();
             if (rowsInserted > 0) {
-                System.out.println("Appello inserito con successo!");
+                JOptionPane.showMessageDialog(null, "Appello inserito con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                System.out.println("Errore durante l'inserimento dell'appello.");
+                JOptionPane.showMessageDialog(null, "Errore durante l'inserimento dell'appello.", "Errore", JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (SQLException e) {
-            System.out.println("Errore durante l'inserimento dell'appello: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Errore durante l'inserimento dell'appello: " + e.getMessage(), 
+                    "Errore", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } finally {
             try {
@@ -84,9 +95,9 @@ public class Docente extends Utente {
         }
     }
 
-    //mediator pattern implementato
-    public void inserisci_voto(DocenteSubject docenteSubject) {
+    //MEDIATOR PATTERN implementato
+    public void inserisci_voto(String matricola, String voto, String nomeEsame, String nomeDocente, String cognomeDocente,DocenteSubject docenteSubject) {
 
-     mediator.inviaVoto(docenteSubject);
+     mediator.inviaVoto(matricola, voto, nomeEsame, nomeDocente, cognomeDocente);
     }
 }

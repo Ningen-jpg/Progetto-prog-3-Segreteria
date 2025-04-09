@@ -624,25 +624,44 @@ public class App {
         appelloButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implementazione dell'inserimento appello
-                JOptionPane.showMessageDialog(docenteFrame,
-                        "Funzionalità di inserimento appello in sviluppo",
-                        "Info",
-                        JOptionPane.INFORMATION_MESSAGE);
+                // Chiamata al metodo inserisci_appello della classe Docente
+                if (docenteCorrente instanceof Docente) {
+                    ((Docente) docenteCorrente).inserisci_appello();
+                } else {
+                    JOptionPane.showMessageDialog(docenteFrame,
+                            "Errore: utente non riconosciuto come docente",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPanel.add(appelloButton);
 
         // Pulsante Inserisci Voto
         JButton votoButton = new JButton("Inserisci Voto");
+        String matricola = JOptionPane.showInputDialog(docenteFrame,
+                "Inserisci la matricola dello studente:");
+        String voto = JOptionPane.showInputDialog(docenteFrame,
+                "Inserisci il voto:");
+        String nomeEsame = JOptionPane.showInputDialog(docenteFrame,
+                "Inserisci il nome dell'esame:");
+        String nomeDocente = JOptionPane.showInputDialog(docenteFrame,
+                "Inserisci il nome del docente:");
+        String cognomeDocente = JOptionPane.showInputDialog(docenteFrame,
+                "Inserisci il cognome del docente:");
+        DocenteSubject docenteSubject = new DocenteSubject();
         votoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implementazione dell'inserimento voto
-                JOptionPane.showMessageDialog(docenteFrame,
-                        "Funzionalità di inserimento voto in sviluppo",
-                        "Info",
-                        JOptionPane.INFORMATION_MESSAGE);
+                // Chiamata al metodo inserisci_voto della classe Docente
+                if (docenteCorrente instanceof Docente) {
+                    ((Docente) docenteCorrente).inserisci_voto(matricola, voto,nomeEsame,nomeDocente, cognomeDocente, docenteSubject);
+                } else {
+                    JOptionPane.showMessageDialog(docenteFrame,
+                            "Errore: utente non riconosciuto come docente",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPanel.add(votoButton);
