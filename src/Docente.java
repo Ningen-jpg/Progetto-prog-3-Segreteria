@@ -98,6 +98,6 @@ public class Docente extends Utente {
     //MEDIATOR PATTERN implementato
     public void inserisci_voto(String matricola, String voto, String nomeEsame, String nomeDocente, String cognomeDocente,DocenteSubject docenteSubject) {
 
-     mediator.inviaVoto(matricola, voto, nomeEsame, nomeDocente, cognomeDocente);
+     mediator.inviaVoto(matricola, voto, nomeEsame, nomeDocente, cognomeDocente, docenteSubject, this.getID());
     }
 }

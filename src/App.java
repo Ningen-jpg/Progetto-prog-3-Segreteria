@@ -639,23 +639,17 @@ public class App {
 
         // Pulsante Inserisci Voto
         JButton votoButton = new JButton("Inserisci Voto");
-        String matricola = JOptionPane.showInputDialog(docenteFrame,
-                "Inserisci la matricola dello studente:");
-        String voto = JOptionPane.showInputDialog(docenteFrame,
-                "Inserisci il voto:");
-        String nomeEsame = JOptionPane.showInputDialog(docenteFrame,
-                "Inserisci il nome dell'esame:");
-        String nomeDocente = JOptionPane.showInputDialog(docenteFrame,
-                "Inserisci il nome del docente:");
-        String cognomeDocente = JOptionPane.showInputDialog(docenteFrame,
-                "Inserisci il cognome del docente:");
         DocenteSubject docenteSubject = new DocenteSubject();
         votoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Chiamata al metodo inserisci_voto della classe Docente
+                String nomeEsame = JOptionPane.showInputDialog(docenteFrame, "Inserisci il nome dell'esame:");
+                String matricola = null;
+                String voto = null;
+                String nomeDocente = null;
+                String cognomeDocente = null;
                 if (docenteCorrente instanceof Docente) {
-                    ((Docente) docenteCorrente).inserisci_voto(matricola, voto,nomeEsame,nomeDocente, cognomeDocente, docenteSubject);
+                    ((Docente) docenteCorrente).inserisci_voto(matricola, voto, nomeEsame, nomeDocente, cognomeDocente, docenteSubject);
                 } else {
                     JOptionPane.showMessageDialog(docenteFrame,
                             "Errore: utente non riconosciuto come docente",
@@ -664,6 +658,7 @@ public class App {
                 }
             }
         });
+
         buttonPanel.add(votoButton);
 
         panel.add(buttonPanel, BorderLayout.CENTER);
