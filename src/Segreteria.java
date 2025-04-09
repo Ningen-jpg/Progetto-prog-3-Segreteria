@@ -1,5 +1,7 @@
 import java.sql.*;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("ALL")
 public class Segreteria extends Utente {
@@ -251,5 +253,90 @@ public class Segreteria extends Utente {
         }
 
         return result.toString();
+    }
+
+    public static boolean addStudente(String matricola, String nome, String cognome,
+            String dataNascita, String password, String residenza, boolean tasse) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+
+            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, residenza, tasse, password) "
+                    +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                    "ON CONFLICT (matricola) DO NOTHING";
+
+            statement = connection.prepareStatement(query);
+            statement.setString(1, matricola);
+            statement.setString(2, nome);
+            statement.setString(3, cognome);
+            statement.setDate(4, Date.valueOf(dataNascita));
+            statement.setString(5, residenza);
+            statement.setBoolean(6, tasse);
+            statement.setString(7, password);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Object[][] getAllStudenti() {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        List<Object[]> rows = new ArrayList<>();
+
+        try {
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+
+            String query = "SELECT * FROM studente ORDER BY matricola";
+            statement = conn.prepareStatement(query);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                Object[] row = {
+                        rs.getString("matricola"),
+                        rs.getString("nome"),
+                        rs.getString("cognome"),
+                        rs.getDate("data_nascita"),
+                        rs.getString("residenza"),
+                        rs.getBoolean("tasse")
+                };
+                rows.add(row);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null)
+                    rs.close();
+                if (statement != null)
+                    statement.close();
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return rows.toArray(new Object[0][]);
     }
 }

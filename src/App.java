@@ -122,89 +122,20 @@ public class App {
         mainFrame.setVisible(true);
     }
 
-    // Classe per l'editor dei pulsanti nella tabella
-    static class ButtonEditor extends DefaultCellEditor {
-        protected JButton button;
-        private String label;
-        private boolean isPushed;
-        private String matricola;
-
-        public ButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value,
-                boolean isSelected, int row, int column) {
-            matricola = (String) table.getValueAt(row, 0);
-            label = (value == null) ? "" : value.toString();
-            button.setText(label);
-            isPushed = true;
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            if (isPushed) {
-                // Non facciamo nulla quando il pulsante viene premuto
-            }
-            isPushed = false;
-            return label;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-    }
-
     // Metodo per aggiornare la lista degli studenti
     private static void refreshStudentiList() {
         studentiTableModel.setRowCount(0);
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-
-            String query = "SELECT * FROM studente ORDER BY matricola";
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Object[] row = {
-                        rs.getString("matricola"),
-                        rs.getString("nome"),
-                        rs.getString("cognome"),
-                        rs.getDate("data_nascita"),
-                        rs.getString("residenza"),
-                        rs.getBoolean("tasse") ? "pagate" : "da pagare"
-                };
-                studentiTableModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null,
-                    "Errore durante il recupero della lista studenti: " + e.getMessage(),
-                    "Errore",
-                    JOptionPane.ERROR_MESSAGE);
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-                if (stmt != null)
-                    stmt.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        Object[][] studenti = Segreteria.getAllStudenti();
+        for (Object[] studente : studenti) {
+            Object[] row = {
+                    studente[0], // matricola
+                    studente[1], // nome
+                    studente[2], // cognome
+                    studente[3], // data_nascita
+                    studente[4], // residenza
+                    ((Boolean) studente[5]) ? "pagate" : "da pagare" // tasse
+            };
+            studentiTableModel.addRow(row);
         }
     }
 
@@ -317,13 +248,14 @@ public class App {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("Aggiungi");
         addButton.addActionListener(e -> {
-            String matricola = matricolaField.getText();
-            String nome = nomeField.getText();
-            String cognome = cognomeField.getText();
-            String dataNascita = dataNascitaField.getText();
-            String password = new String(passwordField.getPassword());
-            String residenza = residenzaField.getText();
-            boolean tasse = tasseCheckbox.isSelected();
+            // Validazione dei campi
+            String matricola = matricolaField.getText().trim();
+            String nome = nomeField.getText().trim();
+            String cognome = cognomeField.getText().trim();
+            String dataNascita = dataNascitaField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+            String residenza = residenzaField.getText().trim();
+            boolean tassePagate = tasseCheckbox.isSelected();
 
             if (matricola.isEmpty() || nome.isEmpty() || cognome.isEmpty() ||
                     dataNascita.isEmpty() || password.isEmpty() || residenza.isEmpty()) {
@@ -334,67 +266,30 @@ public class App {
                 return;
             }
 
-            if (addStudente(matricola, nome, cognome, dataNascita, password, residenza, tasse)) {
+            if (Segreteria.addStudente(matricola, nome, cognome, dataNascita, password, residenza, tassePagate)) {
                 dialog.dispose();
                 refreshStudentiList();
+                JOptionPane.showMessageDialog(null,
+                        "Studente aggiunto con successo",
+                        "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(dialog,
+                        "Errore durante l'inserimento dello studente",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
-        buttonPanel.add(addButton);
 
         JButton cancelButton = new JButton("Annulla");
         cancelButton.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(addButton);
         buttonPanel.add(cancelButton);
 
         dialog.add(formPanel, BorderLayout.CENTER);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.setVisible(true);
-    }
-
-    private static boolean addStudente(String matricola, String nome, String cognome,
-            String dataNascita, String password, String residenza, boolean tasse) {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-
-            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, password, residenza, tasse) "
-                    +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, matricola);
-            stmt.setString(2, nome);
-            stmt.setString(3, cognome);
-            stmt.setDate(4, Date.valueOf(dataNascita));
-            stmt.setString(5, password);
-            stmt.setString(6, residenza);
-            stmt.setBoolean(7, tasse);
-
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null,
-                    "Studente aggiunto con successo",
-                    "Successo",
-                    JOptionPane.INFORMATION_MESSAGE);
-            return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null,
-                    "Errore durante l'inserimento dello studente: " + e.getMessage(),
-                    "Errore",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        } finally {
-            try {
-                if (stmt != null)
-                    stmt.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     // Metodi per il login
