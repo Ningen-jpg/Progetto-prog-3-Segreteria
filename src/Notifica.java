@@ -28,11 +28,4 @@ public class Notifica {
     public String toString() {
         return "Hai ricevuto il voto per l'esame " + esame + " sostenuto il " + data + ": " + voto;
     }
-
-    public void putIfAbsent(String matricola, ArrayList<Object> objects) {
-    }
-
-    public Calendar get(String matricola) {
-        return null;
-    }
 }

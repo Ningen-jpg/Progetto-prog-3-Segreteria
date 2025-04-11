@@ -601,7 +601,7 @@ public class App {
     private static void showDocenteFunctionality(String id) {
         // Crea l'istanza del docente usando il Factory
         docenteCorrente = ConcreteUtenteFactory.getUtente("docente", id, "", "", "");
-
+        DocenteSubject docenteSubject = new DocenteSubject();
         // Rimuovo il pannello di login
         docenteFrame.getContentPane().removeAll();
 
@@ -639,17 +639,12 @@ public class App {
 
         // Pulsante Inserisci Voto
         JButton votoButton = new JButton("Inserisci Voto");
-        DocenteSubject docenteSubject = new DocenteSubject();
+
         votoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nomeEsame = JOptionPane.showInputDialog(docenteFrame, "Inserisci il nome dell'esame:");
-                String matricola = null;
-                String voto = null;
-                String nomeDocente = null;
-                String cognomeDocente = null;
                 if (docenteCorrente instanceof Docente) {
-                    ((Docente) docenteCorrente).inserisci_voto(matricola, voto, nomeEsame, nomeDocente, cognomeDocente, docenteSubject);
+                    ((Docente) docenteCorrente).inserisci_voto(docenteSubject);
                 } else {
                     JOptionPane.showMessageDialog(docenteFrame,
                             "Errore: utente non riconosciuto come docente",
