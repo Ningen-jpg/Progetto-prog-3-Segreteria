@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +18,7 @@ public class Studente extends Utente {
     private boolean tasse;
     private String password;
     private StudenteObserver observer;
-
+    private Mediator mediator;
     public void setObserver(StudenteObserver observer) {
         this.observer = observer;
     }
@@ -25,6 +26,7 @@ public class Studente extends Utente {
     public Studente(String matricola, String password, String nome, String cognome) {
         super(matricola, password, nome, cognome);
         this.matricola = matricola;
+        this.mediator = new NotificationService();
     }
 
     public String getID() {
@@ -107,7 +109,7 @@ public class Studente extends Utente {
     }
 
     public void effettuaPrenotazione(String matricola) {
-        Scanner scanner = new Scanner(System.in);
+
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -116,8 +118,7 @@ public class Studente extends Utente {
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            System.out.print("Inserisci il nome dell'esame: ");
-            String nome_esame = scanner.nextLine().toUpperCase();
+            String nome_esame = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:").toUpperCase();
 
             // Recuperiamo tutti gli appelli disponibili per quell'esame
             String queryAppelli = "SELECT appello.id, appello.data FROM appello " +
@@ -127,30 +128,29 @@ public class Studente extends Utente {
             statement = conn.prepareStatement(queryAppelli);
             statement.setString(1, nome_esame);
             rs = statement.executeQuery();
-
-            List<String> appelli = new ArrayList<>();
+            Boolean appelli_trovati = false;
+            StringBuilder appelli = new StringBuilder("Appelli disponibili:\n");
             while (rs.next()) {
-                String idAppello = rs.getString("id");
-                String data = rs.getString("data");
-                appelli.add(idAppello);
-                System.out.println("ID Appello: " + idAppello + " | Data: " + data);
+                appelli_trovati = true;
+                appelli.append(" - Id: ").append(rs.getString("id")).append(" | Data: ")
+                        .append(rs.getString("data")).append("\n");
             }
 
-            if (appelli.isEmpty()) {
-                System.out.println("Non ci sono ancora appelli disponibili per questo esame.");
+            if (!appelli_trovati) {
+                JOptionPane.showMessageDialog(null,"Non ci sono ancora appelli disponibili per questo esame.");
                 return;
             }
 
-            System.out.print("Seleziona l'ID dell'appello: ");
-            String idAppelloScelto = scanner.nextLine();
-
-            if (!appelli.contains(idAppelloScelto)) {
-                System.out.println("ID Appello non presente.");
-                return;
-            }
+            String appelliDisplay = appelli.toString();
+            String idAppelloScelto = (String) JOptionPane.showInputDialog(null, appelliDisplay,
+                    "Seleziona l'appello (ID):", JOptionPane.QUESTION_MESSAGE);
 
             // Controlliamo il numero di prenotazioni già effettuate per questo appello
+            System.out.println("non ho trovato numprenotati   PRIMA DELLA QUERY");
+
             String queryNumPrenotati = "SELECT num_prenotati FROM appello WHERE id = ?";
+            System.out.println("non ho trovato numprenotati DOPO DELLA QUERY");
+
             statement = conn.prepareStatement(queryNumPrenotati);
             statement.setString(1, idAppelloScelto);
             rs = statement.executeQuery();
@@ -161,7 +161,7 @@ public class Studente extends Utente {
             }
 
             if (numPrenotati >= 50) {
-                System.out.println("Il numero massimo di prenotazioni per questo appello è stato raggiunto.");
+                JOptionPane.showMessageDialog(null,"Il numero massimo di prenotazioni per questo appello è stato raggiunto.");
                 return;
             }
 
@@ -173,7 +173,7 @@ public class Studente extends Utente {
             rs = statement.executeQuery();
 
             if (rs.next()) {
-                System.out.println("Sei già prenotato per questo appello!");
+                JOptionPane.showMessageDialog(null,"Sei già prenotato per questo appello!");
                 return;
             }
 
@@ -190,7 +190,7 @@ public class Studente extends Utente {
             statement.setString(1, idAppelloScelto);
             statement.executeUpdate();
 
-            System.out.println("Prenotazione effettuata con successo!");
+            JOptionPane.showMessageDialog(null,"Prenotazione effettuata con successo!");
         } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             e.printStackTrace();
@@ -208,128 +208,9 @@ public class Studente extends Utente {
         }
     }
 
-    public void valutaVoto() {
-        Connection conn = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
+    public void valutaVoto(String matricola) {
 
-        try {
-            conn = DriverManager.getConnection(
-                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-
-            // Recupera le notifiche dal database
-            String queryNotifiche = "SELECT * FROM Notifica WHERE studente_fk = ?";
-            statement = conn.prepareStatement(queryNotifiche);
-            statement.setString(1, this.matricola);
-            rs = statement.executeQuery();
-
-            if (!rs.next()) {
-                System.out.println("Non hai notifiche da gestire.");
-                return;
-            }
-
-            // Mostra tutte le notifiche disponibili
-            System.out.println("\n******** Notifiche Disponibili *********");
-            do {
-                String id = rs.getString("id_notifica");
-                String esame = rs.getString("nome_esame");
-                String voto = rs.getString("voto");
-                String data = rs.getString("data");
-                System.out.println("ID: " + id + " | Esame: " + esame + " | Voto: " + voto + " | Data: " + data);
-            } while (rs.next());
-
-            // Chiedi all'utente quale notifica gestire
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("\nInserisci l'ID della notifica da gestire: ");
-            String idNotificaStr = scanner.nextLine();
-            int idNotifica = Integer.parseInt(idNotificaStr);
-
-            // Recupera la notifica specifica
-            String queryNotifica = "SELECT * FROM Notifica WHERE id_notifica = ? AND studente_fk = ?";
-            statement = conn.prepareStatement(queryNotifica);
-            statement.setInt(1, idNotifica);
-            statement.setString(2, this.matricola);
-            rs = statement.executeQuery();
-
-            if (!rs.next()) {
-                System.out.println("Notifica non trovata o non autorizzata.");
-                return;
-            }
-
-            String esame = rs.getString("nome_esame");
-            String voto = rs.getString("voto");
-            String data = rs.getString("data");
-
-            System.out.println("Il voto assegnato per l'esame " + esame + " è: " + voto);
-            System.out.print("Accetti il voto? (si/no): ");
-            String risposta = scanner.nextLine().toLowerCase();
-
-            if (risposta.equals("si")) {
-                // Recupera l'ID dell'appello
-                String queryAppello = "SELECT appello.id FROM appello " +
-                        "JOIN esame ON appello.esame_fk = esame.id " +
-                        "WHERE esame.nome = ? AND appello.data::date = ?::date";
-                statement = conn.prepareStatement(queryAppello);
-                statement.setString(1, esame);
-                statement.setString(2, data);
-                rs = statement.executeQuery();
-
-                if (!rs.next()) {
-                    System.out.println("Errore: non trovato l'appello corrispondente.");
-                    return;
-                }
-
-                String idAppello = rs.getString("id");
-
-                // Aggiorna il campo conferma nell'esito
-                String queryUpdateConferma = "UPDATE Esito SET conferma = TRUE WHERE appello_fk = ? AND studente_fk = ?";
-                statement = conn.prepareStatement(queryUpdateConferma);
-                statement.setString(1, idAppello);
-                statement.setString(2, matricola);
-                statement.executeUpdate();
-
-                System.out.println("Hai accettato il voto. Il campo 'conferma' è stato aggiornato a TRUE.");
-            } else if (risposta.equals("no")) {
-                System.out.println("Hai rifiutato il voto.");
-            } else {
-                System.out.println("Risposta non valida. Per favore, digita 'si' o 'no'.");
-                return;
-            }
-
-            // Rimuovi la notifica dal database
-            String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
-            statement = conn.prepareStatement(deleteNotifica);
-            statement.setInt(1, idNotifica);
-            statement.executeUpdate();
-
-            // Notifica anche l'observer per mantenere lo stato in memoria aggiornato
-            if (observer != null) {
-                List<Notifica> notifiche = observer.getNotifiche(this.matricola);
-                Iterator<Notifica> iterator = notifiche.iterator();
-                while (iterator.hasNext()) {
-                    Notifica n = iterator.next();
-                    if (n.getEsame().equals(esame) && n.getVoto().equals(voto) && n.getData().equals(data)) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Errore durante la gestione delle notifiche: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null)
-                    rs.close();
-                if (statement != null)
-                    statement.close();
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        mediator.gestisciNotifica(matricola);
     }
 
     // Implementazione del metodo effettuaTest

@@ -541,24 +541,32 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implementazione della prenotazione
-                JOptionPane.showMessageDialog(studenteFrame,
-                        "Funzionalità di prenotazione in sviluppo",
-                        "Info",
-                        JOptionPane.INFORMATION_MESSAGE);
+                if (studenteCorrente instanceof Studente) {
+                    ((Studente) studenteCorrente).effettuaPrenotazione(matricola);
+                } else {
+                    JOptionPane.showMessageDialog(studenteFrame,
+                            "Errore: utente non riconosciuto come studente",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPanel.add(prenotazioneButton);
 
         // Pulsante Gestione Notifiche
-        JButton notificheButton = new JButton("Gestisci Notifiche");
+        JButton notificheButton = new JButton("Notifiche");
         notificheButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implementazione della gestione notifiche
-                JOptionPane.showMessageDialog(studenteFrame,
-                        "Funzionalità di gestione notifiche in sviluppo",
-                        "Info",
-                        JOptionPane.INFORMATION_MESSAGE);
+                    if (studenteCorrente instanceof Studente) {
+                        ((Studente) studenteCorrente).valutaVoto(matricola);
+                    } else {
+                        JOptionPane.showMessageDialog(studenteFrame,
+                                "Errore: utente non riconosciuto come studente",
+                                "Errore",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
             }
         });
         buttonPanel.add(notificheButton);
