@@ -100,6 +100,12 @@ public class Docente extends Utente {
     }
 
     // MEDIATOR PATTERN implementato
+    /*
+    L'applicazione del Mediator Pattern viene fatta solamente su inserisci_voto perchè utilizziamo
+    il mediator per mediare le notifiche dell'observer.
+    Inserisci_appello invece, non richiede observer e quindi non utilizziamo il mediator.
+    SCELTA PROGETTUALE
+     */
     public void inserisci_voto(DocenteSubject docenteSubject) {
 
         mediator.inviaVoto(docenteSubject, this.getID());
