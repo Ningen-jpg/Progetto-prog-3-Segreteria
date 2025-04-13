@@ -6,7 +6,7 @@ import javax.swing.table.*;
 
 public class NotificationService implements Mediator {
     private Map<String, Observer> partecipanti = new HashMap<>();
-
+    StudenteObserver observer = new StudenteObserver();
     // per aggiungere un nuovo osservatore
     public void registraPartecipante(String id, Observer observer) {
         partecipanti.put(id, observer);
@@ -203,8 +203,9 @@ public class NotificationService implements Mediator {
 
             JPanel notifichePanel = new JPanel();
             notifichePanel.setLayout(new BoxLayout(notifichePanel, BoxLayout.Y_AXIS)); // per metterli in verticale
-
+            Boolean ciSonoNotifiche = false;
             while (rs.next()) {
+                ciSonoNotifiche = true;
                 String id = rs.getString("id");
                 String nomeEsame = rs.getString("nome_esame");
                 String voto = rs.getString("voto");
@@ -212,7 +213,7 @@ public class NotificationService implements Mediator {
 
                 String notifica = "Esame: " + nomeEsame + " | Voto: " + voto + " | Data: " + data;
                 JButton notificaButton = new JButton(notifica);
-                //Qui devo scegliere la notifica cliccando
+
                 notificaButton.addActionListener(e -> {
                     JOptionPane.showMessageDialog(null,
                             "Notifica selezionata:\nID: " + id);
@@ -228,63 +229,83 @@ public class NotificationService implements Mediator {
                             opzioni,
                             opzioni[0]
                     );
+
                     if (scelta == JOptionPane.YES_OPTION) {
                         String queryAppello = "SELECT appello.id FROM appello " +
                                 "JOIN esame ON appello.esame_fk = esame.id " +
                                 "WHERE esame.nome = ? AND appello.data::date = ?::date";
 
-                        statement = conn.prepareStatement(queryAppello);
-                        statement.setString(1, esame);
-                        statement.setString(2, data);
-                        rs = statement.executeQuery();
+                        try {
+                            Connection newConn = DriverManager.getConnection(
+                                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                            PreparedStatement stmtAppello = newConn.prepareStatement(queryAppello);
+                            stmtAppello.setString(1, nomeEsame);
+                            stmtAppello.setString(2, data);
+                            ResultSet rsAppello = stmtAppello.executeQuery();
 
-                        if (!rs.next()) {
-                            System.out.println("Errore: non trovato l'appello corrispondente.");
-                            return;
+                            if (!rsAppello.next()) {
+                                JOptionPane.showMessageDialog(null, "Errore: non trovato l'appello corrispondente.");
+                                return;
+                            }
+
+                            String idAppello = rsAppello.getString("id");
+
+                            String queryUpdateConferma = "UPDATE Esito SET conferma = TRUE WHERE appello_fk = ? AND studente_fk = ?";
+                            PreparedStatement stmtUpdate = newConn.prepareStatement(queryUpdateConferma);
+                            stmtUpdate.setString(1, idAppello);
+                            stmtUpdate.setString(2, matricola);
+                            stmtUpdate.executeUpdate();
+
+                            JOptionPane.showMessageDialog(null, "Hai accettato il voto. Il campo 'conferma' è stato aggiornato a TRUE.");
+
+                            String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
+                            PreparedStatement stmtDelete = newConn.prepareStatement(deleteNotifica);
+                            stmtDelete.setString(1, id);
+                            stmtDelete.executeUpdate();
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
                         }
-
-                        String idAppello = rs.getString("id");
-
-                        // Aggiorna il campo conferma nell'esito
-                        String queryUpdateConferma = "UPDATE Esito SET conferma = TRUE WHERE appello_fk = ? AND studente_fk = ?";
-                        statement = conn.prepareStatement(queryUpdateConferma);
-                        statement.setString(1, idAppello);
-                        statement.setString(2, matricola);
-                        statement.executeUpdate();
-
-                        System.out.println("Hai accettato il voto. Il campo 'conferma' è stato aggiornato a TRUE.");
-                        // Rimuovi la notifica dal database
-                        String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
-                        statement = conn.prepareStatement(deleteNotifica);
-                        statement.setInt(1, idNotifica);
-                        statement.executeUpdate();
+                    } else if (scelta == JOptionPane.NO_OPTION) {
+                        JOptionPane.showMessageDialog(null, "Hai rifiutato il voto.");
+                        try {
+                            Connection newConn = DriverManager.getConnection(
+                                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                            String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
+                            PreparedStatement stmtDelete = newConn.prepareStatement(deleteNotifica);
+                            stmtDelete.setString(1, id);
+                            stmtDelete.executeUpdate();
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
                     }
-                    }else if (scelta == JOptionPane.NO_OPTION) {
-                    JOptionPane.showMessageDialog(null, "Hai rifiutato il voto.");
-                    // Rimuovi la notifica dal database
-                    String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
-                    statement = conn.prepareStatement(deleteNotifica);
-                    statement.setInt(1, idNotifica);
-                    statement.executeUpdate();
-                }
                 });
+
                 notifichePanel.add(notificaButton);
-            }
 
                 // Notifica anche l'observer per mantenere lo stato in memoria aggiornato
                 if (observer != null) {
-                    List<Notifica> notifiche = observer.getNotifiche(this.matricola);
+                    List<Notifica> notifiche = observer.getNotifiche(matricola);
                     Iterator<Notifica> iterator = notifiche.iterator();
                     while (iterator.hasNext()) {
                         Notifica n = iterator.next();
-                        if (n.getEsame().equals(esame) && n.getVoto().equals(voto) && n.getData().equals(data)) {
+                        if (n.getEsame().equals(nomeEsame) && n.getVoto().equals(voto) && n.getData().equals(data)) {
                             iterator.remove();
                             break;
                         }
                     }
                 }
-        }
-        catch (SQLException e) {
+            }
+            if(ciSonoNotifiche){
+                JDialog dialog = new JDialog();
+                dialog.setTitle("Notifiche");
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.getContentPane().add(new JScrollPane(notifichePanel));
+                dialog.setSize(400, 300);
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+            }
+            else { JOptionPane.showMessageDialog(null,"Non ci sono notifiche");}
+        } catch (SQLException e) {
             System.out.println("Errore: " + e.getMessage());
             e.printStackTrace();
         } finally {

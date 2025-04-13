@@ -146,10 +146,8 @@ public class Studente extends Utente {
                     "Seleziona l'appello (ID):", JOptionPane.QUESTION_MESSAGE);
 
             // Controlliamo il numero di prenotazioni già effettuate per questo appello
-            System.out.println("non ho trovato numprenotati   PRIMA DELLA QUERY");
 
             String queryNumPrenotati = "SELECT num_prenotati FROM appello WHERE id = ?";
-            System.out.println("non ho trovato numprenotati DOPO DELLA QUERY");
 
             statement = conn.prepareStatement(queryNumPrenotati);
             statement.setString(1, idAppelloScelto);
