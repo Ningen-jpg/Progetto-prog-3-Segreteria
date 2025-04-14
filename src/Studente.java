@@ -1,25 +1,11 @@
 import javax.swing.*;
 import java.sql.*;
-import java.util.Date;
-import java.util.List;
-
 
 public class Studente extends Utente {
     private String matricola; // chiave primaria
-    private Date dataNascita;
-    private String residenza;
-    private List<Esame> esami;
-    private CorsoDiLaurea pianoDiStudi;
-    private List<Esame> esamiSuperati;
-    private List<Esame> esamiSostenuti;
-    private List<Esame> testCompletati;
-    private boolean tasse;
     private String password;
     private StudenteObserver observer;
     private Mediator mediator;
-    public void setObserver(StudenteObserver observer) {
-        this.observer = observer;
-    }
 
     public Studente(String matricola, String password, String nome, String cognome) {
         super(matricola, password, nome, cognome);
@@ -199,7 +185,6 @@ public class Studente extends Utente {
                         try {
                             Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
                             PreparedStatement stmt = null;
-
                             // Inserisci l'esito con voto = 0 e conferma = false
                             String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
                             stmt = newconn.prepareStatement(insertEsito);
@@ -239,12 +224,18 @@ public class Studente extends Utente {
                             ex.printStackTrace();
                         }
                         pannelloPrenotazioni.remove(prenotazione);
-
                         // Aggiorna la UI
                         pannelloPrenotazioni.revalidate();
                         pannelloPrenotazioni.repaint();
                     }
                     else {JOptionPane.showMessageDialog(dialog,"Risposta non valida. Operazione annullata.");}
+                    if(newconn != null){
+                        try {
+                            newconn.close();
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 });
                 pannelloPrenotazioni.add(prenotazione);
             }
