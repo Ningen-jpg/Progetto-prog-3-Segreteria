@@ -213,7 +213,6 @@ public class Studente extends Utente {
 
     // Implementazione del metodo effettuaTest
     public void effettuaTest() {
-        Scanner scanner = new Scanner(System.in);
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -235,8 +234,10 @@ public class Studente extends Utente {
             rs = statement.executeQuery();
 
             List<String> appelliPrenotati = new ArrayList<>();
-            System.out.println("\n=== Esami per cui sei prenotato ===");
+            JOptionPane.showMessageDialog(null,"Esami per cui sei prenotato");
             boolean trovatiEsami = false;
+
+            StringBuilder sb = new StringBuilder("Esami per cui sei prenotato:\n\n");
 
             while (rs.next()) {
                 trovatiEsami = true;
@@ -246,20 +247,23 @@ public class Studente extends Utente {
                 String dataAppello = rs.getString("data");
 
                 appelliPrenotati.add(idAppello);
-                System.out.println("ID Appello: " + idAppello + " | Esame: " + nomeEsame + " (ID: " + idEsame
-                        + ") | Data appello: " + dataAppello);
+                sb.append("ID Appello: ").append(idAppello)
+                        .append(" | Esame: ").append(nomeEsame)
+                        .append(" (ID: ").append(idEsame)
+                        .append(") | Data appello: ").append(dataAppello)
+                        .append("\n");
             }
 
             if (!trovatiEsami) {
-                System.out.println("Non sei prenotato per nessun esame. Effettua prima una prenotazione.");
+                JOptionPane.showMessageDialog(null,"Non sei prenotato per nessun esame. Effettua prima una prenotazione.");
                 return;
             }
+            JOptionPane.showMessageDialog(null, sb.toString());
+            String idAppelloScelto = JOptionPane.showInputDialog("Inserisci l'ID dell'appello per cui vuoi effettuare il test");
 
-            System.out.print("\nInserisci l'ID dell'appello per cui vuoi effettuare il test: ");
-            String idAppelloScelto = scanner.nextLine();
 
             if (!appelliPrenotati.contains(idAppelloScelto)) {
-                System.out.println("ID appello non valido o non sei prenotato per questo appello!");
+                JOptionPane.showMessageDialog(null,"ID appello non valido o non sei prenotato per questo appello!");
                 return;
             }
 
@@ -268,54 +272,79 @@ public class Studente extends Utente {
                     "JOIN appello ON Prenotazione.appello_fk = appello.id " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
                     "WHERE Prenotazione.studente_fk = ? AND appello.id = ?";
+
             statement = conn.prepareStatement(queryEsame);
             statement.setString(1, this.matricola);
             statement.setString(2, idAppelloScelto);
             rs = statement.executeQuery();
 
             if (!rs.next()) {
-                System.out.println("Errore: esame non trovato!");
+                JOptionPane.showMessageDialog(null,"Errore: esame non trovato!");
                 return;
             }
             String idEsame = rs.getString("id");
             String nomeEsame = rs.getString("nome");
+            String stringa = "ID: " + idEsame + "Esame: " + nomeEsame;
+            JButton prenotazione = new JButton(stringa);
 
-            // Chiedi allo studente se vuole effettuare il test
-            System.out.print("\nVuoi effettuare il test per " + nomeEsame + "? (si/no): ");
-            String risposta = scanner.nextLine().toLowerCase();
+            prenotazione.addActionListener(e -> {
+                // Chiedi allo studente se vuole effettuare il test
+                String[] opzioni = {"Effettua il test", "Cancella prenotazione"};
+                String messaggio = "Vuoi effettuare il test ?";
+                int scelta = JOptionPane.showOptionDialog(
+                        null,
+                        messaggio,
+                        "Effettua test",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opzioni,
+                        opzioni[0]
+                );
 
-            if (risposta.equals("si")) {
-                // Inserisci l'esito con voto = 0 e conferma = false
-                String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
-                statement = conn.prepareStatement(insertEsito);
-                statement.setString(1, idAppelloScelto);
-                statement.setString(2, this.matricola);
-                statement.executeUpdate();
+                if (scelta == JOptionPane.YES_OPTION) {
+                    try {
+                        Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                        PreparedStatement stmt = null;
 
-                // Rimuovi la prenotazione
-                String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
-                statement = conn.prepareStatement(deletePrenotazione);
-                statement.setString(1, idAppelloScelto);
-                statement.setString(2, this.matricola);
-                statement.executeUpdate();
+                        // Inserisci l'esito con voto = 0 e conferma = false
+                        String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
+                        stmt = newconn.prepareStatement(insertEsito);
+                        stmt.setString(1, idAppelloScelto);
+                        stmt.setString(2, this.matricola);
+                        stmt.executeUpdate();
 
-                System.out.println(
-                        "Hai effettuato il test e sei stato registrato per l'esame. Attendi il voto del docente.");
-            } else if (risposta.equals("no")) {
-                // Rimuovi solo la prenotazione
-                String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
-                statement = conn.prepareStatement(deletePrenotazione);
-                statement.setString(1, idAppelloScelto);
-                statement.setString(2, this.matricola);
-                statement.executeUpdate();
+                        // Rimuovi la prenotazione
+                        String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                        stmt = newconn.prepareStatement(deletePrenotazione);
+                        stmt.setString(1, idAppelloScelto);
+                        stmt.setString(2, this.matricola);
+                        stmt.executeUpdate();
 
-                System.out.println("Hai annullato la prenotazione per questo esame.");
-            } else {
-                System.out.println("Risposta non valida. Operazione annullata.");
-            }
+                        JOptionPane.showMessageDialog(null,"Hai effettuato il test e sei stato registrato per l'esame.");
+                    } catch(SQLException ex){
+                        ex.printStackTrace();
+                    }
+                } else if(scelta == JOptionPane.NO_OPTION){
+                    try{
+                        Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                        PreparedStatement stmt = null;
+                        // Rimuovi solo la prenotazione
+                        String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                        stmt = newconn.prepareStatement(deletePrenotazione);
+                        stmt.setString(1, idAppelloScelto);
+                        stmt.setString(2, this.matricola);
+                        stmt.executeUpdate();
 
+                        JOptionPane.showMessageDialog(null,"Hai annullato la prenotazione per questo esame.");
+                    } catch(SQLException ex){
+                        ex.printStackTrace();
+                    }
+                }
+                else {JOptionPane.showMessageDialog(null,"Risposta non valida. Operazione annullata.");}
+            });
         } catch (SQLException e) {
-            System.out.println("Errore durante l'esecuzione del test: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,"Errore durante l'esecuzione del test: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {

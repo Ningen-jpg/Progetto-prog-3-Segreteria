@@ -576,11 +576,14 @@ public class App {
         testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implementazione del test
-                JOptionPane.showMessageDialog(studenteFrame,
-                        "Funzionalità di test in sviluppo",
-                        "Info",
-                        JOptionPane.INFORMATION_MESSAGE);
+                if (studenteCorrente instanceof Studente) {
+                    ((Studente) studenteCorrente).effettuaTest();
+                } else {
+                    JOptionPane.showMessageDialog(studenteFrame,
+                            "Errore: utente non riconosciuto come studente",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPanel.add(testButton);
