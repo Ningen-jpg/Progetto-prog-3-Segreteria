@@ -1,10 +1,8 @@
 import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
+
 
 public class Studente extends Utente {
     private String matricola; // chiave primaria
@@ -37,72 +35,6 @@ public class Studente extends Utente {
     public String getMatricola() {
         return matricola;
     }
-
-    public Date getDataNascita() {
-        return dataNascita;
-    }
-
-    public void setDataNascita(Date dataNascita) {
-        this.dataNascita = dataNascita;
-    }
-
-    public String getResidenza() {
-        return residenza;
-    }
-
-    public void setResidenza(String residenza) {
-        this.residenza = residenza;
-    }
-
-    public List<Esame> getEsami() {
-        return esami;
-    }
-
-    public void setEsami(List<Esame> esami) {
-        this.esami = esami;
-    }
-
-    public CorsoDiLaurea getPianoDiStudi() {
-        return pianoDiStudi;
-    }
-
-    public void setPianoDiStudi(CorsoDiLaurea pianoDiStudi) {
-        this.pianoDiStudi = pianoDiStudi;
-    }
-
-    public List<Esame> getEsamiSuperati() {
-        return esamiSuperati;
-    }
-
-    public void setEsamiSuperati(List<Esame> esamiSuperati) {
-        this.esamiSuperati = esamiSuperati;
-    }
-
-    public List<Esame> getEsamiSostenuti() {
-        return esamiSostenuti;
-    }
-
-    public void setEsamiSostenuti(List<Esame> esamiSostenuti) {
-        this.esamiSostenuti = esamiSostenuti;
-    }
-
-    public List<Esame> getTestCompletati() {
-        return testCompletati;
-    }
-
-    public void setTestCompletati(List<Esame> testCompletati) {
-        this.testCompletati = testCompletati;
-    }
-
-    public boolean isTasse() {
-        return tasse;
-    }
-
-    public void setTasse(boolean tasse) {
-        this.tasse = tasse;
-    }
-
-    // public void setPassword(String password) {}
 
     public String getPassword() {
         return password;
@@ -222,7 +154,7 @@ public class Studente extends Utente {
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
             // Recupera gli esami per cui lo studente è prenotato
-            String queryPrenotazioni = "SELECT esame.id, esame.nome, appello.id AS id_appello, appello.data " +
+            String queryPrenotazioni = "SELECT esame.nome, appello.id AS id_appello, appello.data " +
                     "FROM Prenotazione " +
                     "JOIN appello ON Prenotazione.appello_fk = appello.id " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
@@ -233,118 +165,100 @@ public class Studente extends Utente {
             statement.setString(1, this.matricola);
             rs = statement.executeQuery();
 
-            List<String> appelliPrenotati = new ArrayList<>();
-            JOptionPane.showMessageDialog(null,"Esami per cui sei prenotato");
-            boolean trovatiEsami = false;
-
-            StringBuilder sb = new StringBuilder("Esami per cui sei prenotato:\n\n");
-
+            JOptionPane.showMessageDialog(null,"Esami per cui sei prenotato:\n\n");
+            JPanel pannelloPrenotazioni = new JPanel();
+            pannelloPrenotazioni.setLayout(new BoxLayout(pannelloPrenotazioni, BoxLayout.Y_AXIS));
+            boolean ciSonoPrenotazioni = false;
+            final JDialog dialog = new JDialog();
             while (rs.next()) {
-                trovatiEsami = true;
-                String idEsame = rs.getString("id");
+                ciSonoPrenotazioni = true;
+                String id_appello = rs.getString("id_appello");
                 String nomeEsame = rs.getString("nome");
-                String idAppello = rs.getString("id_appello");
                 String dataAppello = rs.getString("data");
 
-                appelliPrenotati.add(idAppello);
-                sb.append("ID Appello: ").append(idAppello)
-                        .append(" | Esame: ").append(nomeEsame)
-                        .append(" (ID: ").append(idEsame)
-                        .append(") | Data appello: ").append(dataAppello)
-                        .append("\n");
-            }
+                String stringEsami = " | Esame: " + nomeEsame + " | Data Appello: " + dataAppello;
 
-            if (!trovatiEsami) {
-                JOptionPane.showMessageDialog(null,"Non sei prenotato per nessun esame. Effettua prima una prenotazione.");
-                return;
-            }
-            JOptionPane.showMessageDialog(null, sb.toString());
-            String idAppelloScelto = JOptionPane.showInputDialog("Inserisci l'ID dell'appello per cui vuoi effettuare il test");
+                JButton prenotazione = new JButton(stringEsami);
 
+                prenotazione.addActionListener(e -> {
+                    // Chiedi allo studente se vuole effettuare il test
+                    String[] opzioni = {"Effettua il test", "Cancella prenotazione"};
+                    String messaggio = "Vuoi effettuare il test ?";
+                    int scelta = JOptionPane.showOptionDialog(
+                            dialog,
+                            messaggio,
+                            "Effettua test",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            opzioni,
+                            opzioni[0]
+                    );
 
-            if (!appelliPrenotati.contains(idAppelloScelto)) {
-                JOptionPane.showMessageDialog(null,"ID appello non valido o non sei prenotato per questo appello!");
-                return;
-            }
+                    if (scelta == JOptionPane.YES_OPTION) {
+                        try {
+                            Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                            PreparedStatement stmt = null;
 
-            // Recupera l'ID dell'esame per questo appello
-            String queryEsame = "SELECT esame.id, esame.nome FROM Prenotazione " +
-                    "JOIN appello ON Prenotazione.appello_fk = appello.id " +
-                    "JOIN esame ON appello.esame_fk = esame.id " +
-                    "WHERE Prenotazione.studente_fk = ? AND appello.id = ?";
+                            // Inserisci l'esito con voto = 0 e conferma = false
+                            String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
+                            stmt = newconn.prepareStatement(insertEsito);
+                            stmt.setString(1, id_appello);
+                            stmt.setString(2, this.matricola);
+                            stmt.executeUpdate();
 
-            statement = conn.prepareStatement(queryEsame);
-            statement.setString(1, this.matricola);
-            statement.setString(2, idAppelloScelto);
-            rs = statement.executeQuery();
+                            // Rimuovi la prenotazione
+                            String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                            stmt = newconn.prepareStatement(deletePrenotazione);
+                            stmt.setString(1, id_appello);
+                            stmt.setString(2, this.matricola);
+                            stmt.executeUpdate();
 
-            if (!rs.next()) {
-                JOptionPane.showMessageDialog(null,"Errore: esame non trovato!");
-                return;
-            }
-            String idEsame = rs.getString("id");
-            String nomeEsame = rs.getString("nome");
-            String stringa = "ID: " + idEsame + "Esame: " + nomeEsame;
-            JButton prenotazione = new JButton(stringa);
+                            JOptionPane.showMessageDialog(dialog,"Hai effettuato il test e sei stato registrato per l'esame.");
+                            pannelloPrenotazioni.remove(prenotazione);
 
-            prenotazione.addActionListener(e -> {
-                // Chiedi allo studente se vuole effettuare il test
-                String[] opzioni = {"Effettua il test", "Cancella prenotazione"};
-                String messaggio = "Vuoi effettuare il test ?";
-                int scelta = JOptionPane.showOptionDialog(
-                        null,
-                        messaggio,
-                        "Effettua test",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        opzioni,
-                        opzioni[0]
-                );
+                            // Aggiorna la UI
+                            pannelloPrenotazioni.revalidate();
+                            pannelloPrenotazioni.repaint();
+                        } catch(SQLException ex){
+                            ex.printStackTrace();
+                        }
+                    } else if(scelta == JOptionPane.NO_OPTION){
+                        try{
+                            Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+                            PreparedStatement stmt = null;
+                            // Rimuovi solo la prenotazione
+                            String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
+                            stmt = newconn.prepareStatement(deletePrenotazione);
+                            stmt.setString(1, id);
+                            stmt.setString(2, this.matricola);
+                            stmt.executeUpdate();
 
-                if (scelta == JOptionPane.YES_OPTION) {
-                    try {
-                        Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-                        PreparedStatement stmt = null;
+                            JOptionPane.showMessageDialog(dialog,"Hai annullato la prenotazione per questo esame.");
+                        } catch(SQLException ex){
+                            ex.printStackTrace();
+                        }
+                        pannelloPrenotazioni.remove(prenotazione);
 
-                        // Inserisci l'esito con voto = 0 e conferma = false
-                        String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
-                        stmt = newconn.prepareStatement(insertEsito);
-                        stmt.setString(1, idAppelloScelto);
-                        stmt.setString(2, this.matricola);
-                        stmt.executeUpdate();
-
-                        // Rimuovi la prenotazione
-                        String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
-                        stmt = newconn.prepareStatement(deletePrenotazione);
-                        stmt.setString(1, idAppelloScelto);
-                        stmt.setString(2, this.matricola);
-                        stmt.executeUpdate();
-
-                        JOptionPane.showMessageDialog(null,"Hai effettuato il test e sei stato registrato per l'esame.");
-                    } catch(SQLException ex){
-                        ex.printStackTrace();
+                        // Aggiorna la UI
+                        pannelloPrenotazioni.revalidate();
+                        pannelloPrenotazioni.repaint();
                     }
-                } else if(scelta == JOptionPane.NO_OPTION){
-                    try{
-                        Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-                        PreparedStatement stmt = null;
-                        // Rimuovi solo la prenotazione
-                        String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
-                        stmt = newconn.prepareStatement(deletePrenotazione);
-                        stmt.setString(1, idAppelloScelto);
-                        stmt.setString(2, this.matricola);
-                        stmt.executeUpdate();
-
-                        JOptionPane.showMessageDialog(null,"Hai annullato la prenotazione per questo esame.");
-                    } catch(SQLException ex){
-                        ex.printStackTrace();
-                    }
-                }
-                else {JOptionPane.showMessageDialog(null,"Risposta non valida. Operazione annullata.");}
-            });
+                    else {JOptionPane.showMessageDialog(dialog,"Risposta non valida. Operazione annullata.");}
+                });
+                pannelloPrenotazioni.add(prenotazione);
+            }
+            if(ciSonoPrenotazioni){
+                dialog.setTitle("Prenotazioni");
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.getContentPane().add(new JScrollPane(pannelloPrenotazioni));
+                dialog.setSize(400, 300);
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+            }
+            else { JOptionPane.showMessageDialog(null,"Non ci sono notifiche");}
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null,"Errore durante l'esecuzione del test: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,"Errore durante il test, riprova." + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
