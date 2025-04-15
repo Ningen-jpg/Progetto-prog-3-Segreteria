@@ -256,7 +256,7 @@ public class NotificationService implements Mediator {
                             stmtUpdate.setString(2, matricola);
                             stmtUpdate.executeUpdate();
 
-                            JOptionPane.showMessageDialog(null, "Hai accettato il voto. Il campo 'conferma' è stato aggiornato a TRUE.");
+                            JOptionPane.showMessageDialog(null, "Hai accettato il voto.");
 
                             String deleteNotifica = "DELETE FROM Notifica WHERE id_notifica = ?";
                             PreparedStatement stmtDelete = newConn.prepareStatement(deleteNotifica);

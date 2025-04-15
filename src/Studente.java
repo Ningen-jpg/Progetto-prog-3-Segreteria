@@ -38,6 +38,22 @@ public class Studente extends Utente {
 
             String nome_esame = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:").toUpperCase();
 
+            //Verifico se ho già sostenuto l'esame
+            String queryVerifica = "SELECT 1 " +
+                    " FROM esito " +
+                    " JOIN appello ON esito.appello_fk = appello.id " +
+                    " JOIN esame ON appello.esame_fk = esame.id " +
+                    " WHERE esame.nome = ? AND esito.studente_fk = ? AND esito.conferma = true";
+
+            statement = conn.prepareStatement(queryVerifica);
+            statement.setString(1, nome_esame);
+            statement.setString(2, matricola);
+            rs = statement.executeQuery();
+            if (rs.next()) {
+                JOptionPane.showMessageDialog(null, "Hai già sostenuto questo esame!");
+                return;
+            }
+
             // Recuperiamo tutti gli appelli disponibili per quell'esame
             String queryAppelli = "SELECT appello.id, appello.data FROM appello " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
@@ -46,7 +62,7 @@ public class Studente extends Utente {
             statement = conn.prepareStatement(queryAppelli);
             statement.setString(1, nome_esame);
             rs = statement.executeQuery();
-            Boolean appelli_trovati = false;
+            boolean appelli_trovati = false;
             StringBuilder appelli = new StringBuilder("Appelli disponibili:\n");
             while (rs.next()) {
                 appelli_trovati = true;
@@ -125,7 +141,6 @@ public class Studente extends Utente {
     }
 
     public void valutaVoto(String matricola) {
-
         mediator.gestisciNotifica(matricola);
     }
 
@@ -180,17 +195,19 @@ public class Studente extends Utente {
                             opzioni,
                             opzioni[0]
                     );
-
+                    Connection newconn = null;
+                    PreparedStatement stmt = null;
                     if (scelta == JOptionPane.YES_OPTION) {
                         try {
-                            Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-                            PreparedStatement stmt = null;
+                            newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+
                             // Inserisci l'esito con voto = 0 e conferma = false
                             String insertEsito = "INSERT INTO esito (appello_fk, studente_fk, voto, conferma) VALUES (?, ?, '0', false)";
                             stmt = newconn.prepareStatement(insertEsito);
                             stmt.setString(1, id_appello);
                             stmt.setString(2, this.matricola);
                             stmt.executeUpdate();
+                            stmt.close();
 
                             // Rimuovi la prenotazione
                             String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
@@ -198,6 +215,7 @@ public class Studente extends Utente {
                             stmt.setString(1, id_appello);
                             stmt.setString(2, this.matricola);
                             stmt.executeUpdate();
+                            stmt.close();
 
                             JOptionPane.showMessageDialog(dialog,"Hai effettuato il test e sei stato registrato per l'esame.");
                             pannelloPrenotazioni.remove(prenotazione);
@@ -207,34 +225,39 @@ public class Studente extends Utente {
                             pannelloPrenotazioni.repaint();
                         } catch(SQLException ex){
                             ex.printStackTrace();
+                        }finally {
+                            try {
+                                if (stmt != null) stmt.close();
+                                if (newconn != null) newconn.close();
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     } else if(scelta == JOptionPane.NO_OPTION){
                         try{
-                            Connection newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
-                            PreparedStatement stmt = null;
+                            newconn = DriverManager.getConnection("jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
                             // Rimuovi solo la prenotazione
                             String deletePrenotazione = "DELETE FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
                             stmt = newconn.prepareStatement(deletePrenotazione);
-                            stmt.setString(1, id);
+                            stmt.setString(1, id_appello);
                             stmt.setString(2, this.matricola);
                             stmt.executeUpdate();
 
                             JOptionPane.showMessageDialog(dialog,"Hai annullato la prenotazione per questo esame.");
                         } catch(SQLException ex){
                             ex.printStackTrace();
+                        }finally {
+                            try {
+                                if (stmt != null) stmt.close();
+                                if (newconn != null) newconn.close();
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                         pannelloPrenotazioni.remove(prenotazione);
                         // Aggiorna la UI
                         pannelloPrenotazioni.revalidate();
                         pannelloPrenotazioni.repaint();
-                    }
-                    else {JOptionPane.showMessageDialog(dialog,"Risposta non valida. Operazione annullata.");}
-                    if(newconn != null){
-                        try {
-                            newconn.close();
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
-                        }
                     }
                 });
                 pannelloPrenotazioni.add(prenotazione);
