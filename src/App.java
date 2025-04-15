@@ -109,7 +109,7 @@ public class App {
 
         // Crediti
         JLabel creditsLabel = new JLabel(
-                "Realizzato da: Guadagnuolo Alessandro 0124001570 | Domenico Merola 0124001705", SwingConstants.CENTER);
+                "Realizzato da: Guadagnuolo Alessandro 0124001570 | Merola Domenico 0124001705", SwingConstants.CENTER);
         creditsLabel.setFont(new Font("Arial", Font.ITALIC, 12));
         creditsLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(creditsLabel, BorderLayout.SOUTH);
