@@ -1,5 +1,5 @@
 import java.util.*;
-
+@SuppressWarnings("ALL")
 public class StudenteObserver implements Observer {
 
     private Map<String, List<Notifica>> notificaStudente = new HashMap<>();

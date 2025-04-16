@@ -2,8 +2,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
-
+//@SuppressWarnings("ALL")
 public class App {
     // Frame principale dell'applicazione che mostra i pulsanti per scegliere il
     // tipo di utente (Studente/Docente/Segreteria)
