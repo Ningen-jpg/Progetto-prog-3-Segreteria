@@ -1,5 +1,6 @@
 import java.sql.*;
 import javax.swing.JOptionPane;
+@SuppressWarnings("ALL")
 
 public class Docente extends Utente {
     private Mediator mediator;

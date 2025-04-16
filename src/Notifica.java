@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Calendar;
+@SuppressWarnings("ALL")
 
 public class Notifica {
     private String esame;

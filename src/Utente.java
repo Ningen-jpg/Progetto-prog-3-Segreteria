@@ -1,3 +1,4 @@
+@SuppressWarnings("ALL")
 public abstract class Utente {
     protected String id;
     private String nome;
