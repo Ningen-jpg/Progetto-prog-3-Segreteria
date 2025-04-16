@@ -1,10 +1,10 @@
 import javax.swing.*;
 import java.sql.*;
+@SuppressWarnings("ALL")
 
 public class Studente extends Utente {
     private String matricola; // chiave primaria
     private String password;
-    private StudenteObserver observer;
     private Mediator mediator;
 
     public Studente(String matricola, String password, String nome, String cognome) {

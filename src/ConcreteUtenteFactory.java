@@ -1,13 +1,14 @@
+@SuppressWarnings("ALL")
+//implementazione del factory method pattern
+
 public class ConcreteUtenteFactory {
-    //implementazione del factory method pattern
     public static Utente getUtente (String tipoUtente, String id,String password, String nome, String cognome)
     {
         if (tipoUtente == null)
         {
             return null;
         }
-        String n = nome;
-        String c = cognome;
+
         switch (tipoUtente.toLowerCase()) {
             case "studente":
                 return new Studente(id, password, nome, cognome);

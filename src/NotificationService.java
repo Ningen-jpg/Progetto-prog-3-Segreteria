@@ -2,15 +2,13 @@ import java.sql.*;
 import java.sql.Date;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.table.*;
+@SuppressWarnings("ALL")
 
 public class NotificationService implements Mediator {
     private Map<String, Observer> partecipanti = new HashMap<>();
     StudenteObserver observer = new StudenteObserver();
     // per aggiungere un nuovo osservatore
-    public void registraPartecipante(String id, Observer observer) {
-        partecipanti.put(id, observer);
-    }
+
 
     // verrà richiamato dai Docenti
     @Override
