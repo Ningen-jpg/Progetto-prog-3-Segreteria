@@ -1,4 +1,4 @@
-package Main;
+package Controller;
 
 import Factory.ConcreteUtenteFactory;
 import Model.Docente;
@@ -15,6 +15,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+
 public class App {
     // Frame principale dell'applicazione che mostra i pulsanti per scegliere il
     // tipo di utente (Model.Studente/Model.Docente/Model.Segreteria)
@@ -41,7 +42,7 @@ public class App {
         }
 
         // Creo la finestra principale
-        mainFrame = new JFrame("Model.Segreteria studenti");
+        mainFrame = new JFrame("Segreteria studenti");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(800, 500);
         mainFrame.setLocationRelativeTo(null);
@@ -53,7 +54,7 @@ public class App {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Model.Segreteria studenti", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Segreteria studenti", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
@@ -65,7 +66,7 @@ public class App {
         // Pannello sinistro per il pulsante Model.Segreteria
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new GridBagLayout());
-        JButton segreteriaButton = new JButton("Model.Segreteria");
+        JButton segreteriaButton = new JButton("Segreteria");
         segreteriaButton.setFont(new Font("Arial", Font.PLAIN, 14));
         segreteriaButton.setPreferredSize(new Dimension(150, 40));
         segreteriaButton.addActionListener(new ActionListener() {
@@ -88,7 +89,7 @@ public class App {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(0, 5, 0, 5);
 
-        JButton docenteButton = new JButton("Model.Docente");
+        JButton docenteButton = new JButton("Docente");
         docenteButton.setFont(new Font("Arial", Font.PLAIN, 14));
         docenteButton.setPreferredSize(new Dimension(150, 40));
         docenteButton.addActionListener(new ActionListener() {
@@ -101,7 +102,7 @@ public class App {
         gbc.gridy = 0;
         rightPanel.add(docenteButton, gbc);
 
-        JButton studenteButton = new JButton("Model.Studente");
+        JButton studenteButton = new JButton("Studente");
         studenteButton.setFont(new Font("Arial", Font.PLAIN, 14));
         studenteButton.setPreferredSize(new Dimension(150, 40));
         studenteButton.addActionListener(new ActionListener() {
@@ -193,7 +194,7 @@ public class App {
     }
 
     private static void mostraDialogAggiungiStudente() {
-        JDialog dialog = new JDialog(segreteriaFrame, "Aggiungi Model.Studente", true);
+        JDialog dialog = new JDialog(segreteriaFrame, "Aggiungi Studente", true);
         dialog.setLayout(new BorderLayout(10, 10));
         dialog.setSize(450, 400);
         dialog.setLocationRelativeTo(null);
@@ -278,7 +279,7 @@ public class App {
                 dialog.dispose();
                 refreshStudentiList();
                 JOptionPane.showMessageDialog(null,
-                        "Model.Studente aggiunto con successo",
+                        "Studente aggiunto con successo",
                         "Successo",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -319,7 +320,7 @@ public class App {
     // Metodi per aprire le finestre
     private static void openStudenteFrame() {
         if (studenteFrame == null) {
-            studenteFrame = new JFrame("Login Model.Studente");
+            studenteFrame = new JFrame("Login Studente");
             studenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             studenteFrame.setSize(400, 300);
             studenteFrame.setLocationRelativeTo(null);
@@ -388,7 +389,7 @@ public class App {
 
     private static void openDocenteFrame() {
         if (docenteFrame == null) {
-            docenteFrame = new JFrame("Login Model.Docente");
+            docenteFrame = new JFrame("Login Docente");
             docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             docenteFrame.setSize(400, 300);
             docenteFrame.setLocationRelativeTo(null);
@@ -412,7 +413,7 @@ public class App {
             // Campo ID
             gbc.gridx = 0;
             gbc.gridy = 0;
-            loginPanel.add(new JLabel("ID Model.Docente:"), gbc);
+            loginPanel.add(new JLabel("ID Docente:"), gbc);
 
             gbc.gridx = 1;
             gbc.gridy = 0;
@@ -457,7 +458,7 @@ public class App {
 
     private static void openSegreteriaFrame() {
         if (segreteriaFrame == null) {
-            segreteriaFrame = new JFrame("Login Model.Segreteria");
+            segreteriaFrame = new JFrame("Login Segreteria");
             segreteriaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             segreteriaFrame.setSize(400, 300);
             segreteriaFrame.setLocationRelativeTo(null);
@@ -467,7 +468,7 @@ public class App {
             panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
             // Titolo
-            JLabel titleLabel = new JLabel("Area Model.Segreteria", SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("Area Segreteria", SwingConstants.CENTER);
             titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
             panel.add(titleLabel, BorderLayout.NORTH);
 
@@ -481,7 +482,7 @@ public class App {
             // Campo ID
             gbc.gridx = 0;
             gbc.gridy = 0;
-            loginPanel.add(new JLabel("ID Model.Segreteria:"), gbc);
+            loginPanel.add(new JLabel("ID Segreteria:"), gbc);
 
             gbc.gridx = 1;
             gbc.gridy = 0;
@@ -538,7 +539,7 @@ public class App {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Model.Studente", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Funzionalità Studente", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel, BorderLayout.NORTH);
 
@@ -570,14 +571,14 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implementazione della gestione notifiche
-                    if (studenteCorrente instanceof Studente) {
-                        ((Studente) studenteCorrente).valutaVoto(matricola);
-                    } else {
-                        JOptionPane.showMessageDialog(studenteFrame,
-                                "Errore: utente non riconosciuto come studente",
-                                "Errore",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
+                if (studenteCorrente instanceof Studente) {
+                    ((Studente) studenteCorrente).valutaVoto(matricola);
+                } else {
+                    JOptionPane.showMessageDialog(studenteFrame,
+                            "Errore: utente non riconosciuto come studente",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPanel.add(notificheButton);
@@ -633,7 +634,7 @@ public class App {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Model.Docente", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Funzionalità Docente", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel, BorderLayout.NORTH);
 
@@ -646,7 +647,7 @@ public class App {
         appelloButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Chiamata al metodo inserisci_appello della classe Model.Docente
+                // Chiamata al metodo inserisci_appello della classe Docente
                 if (docenteCorrente instanceof Docente) {
                     ((Docente) docenteCorrente).inserisci_appello();
                 } else {
@@ -712,7 +713,7 @@ public class App {
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Model.Segreteria", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Funzionalità Segreteria", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(titleLabel, BorderLayout.NORTH);
 
@@ -730,7 +731,7 @@ public class App {
         });
         buttonPanel.add(studentiButton);
 
-        // Pulsante Visualizza Informazioni Model.Studente
+        // Pulsante Visualizza Informazioni Studente
         JButton infoStudenteButton = new JButton("Visualizza informazioni studente");
         infoStudenteButton.addActionListener(new ActionListener() {
             @Override
@@ -743,7 +744,7 @@ public class App {
                     textArea.setEditable(false);
                     JScrollPane scrollPane = new JScrollPane(textArea);
                     scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(segreteriaFrame, scrollPane, "Informazioni Model.Studente",
+                    JOptionPane.showMessageDialog(segreteriaFrame, scrollPane, "Informazioni Studente",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
             }
