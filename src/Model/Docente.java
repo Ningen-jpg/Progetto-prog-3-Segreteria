@@ -1,5 +1,12 @@
+package Model;
+
+import Mediator.Mediator;
+import Observer.DocenteSubject;
+import Mediator.NotificationService;
 import java.sql.*;
 import javax.swing.JOptionPane;
+import java.util.Random;
+
 @SuppressWarnings("ALL")
 
 public class Docente extends Utente {
@@ -51,8 +58,8 @@ public class Docente extends Utente {
                 return;
             }
 
-            int esameID = rs.getInt("id");
-            String docenteID = rs.getString("docente_fk"); // Docente associato all'esame
+            String esameID = rs.getString("id");
+            String docenteID = rs.getString("docente_fk"); // Model.Docente associato all'esame
             String id = rs.getString("id");
             rs.close();
             statement.close();
@@ -68,7 +75,8 @@ public class Docente extends Utente {
             // sto facendo l'inserimento
             String queryInserimento = "INSERT INTO appello (id, data, esame_fk, num_prenotati) VALUES (?, ?, ?, ?)";
             statement = conn.prepareStatement(queryInserimento);
-            statement.setInt(1, esameID);
+            String appelloID = esameID + "-" + (new Random().nextInt(1000));
+            statement.setString(1, appelloID);
             statement.setDate(2, Date.valueOf(data_appello));
             statement.setString(3, id);
             statement.setInt(4, 0);
@@ -102,7 +110,7 @@ public class Docente extends Utente {
 
     // MEDIATOR PATTERN implementato
     /*
-    L'applicazione del Mediator Pattern viene fatta solamente su inserisci_voto perchè utilizziamo
+    L'applicazione del Mediator.Mediator Pattern viene fatta solamente su inserisci_voto perchè utilizziamo
     il mediator per mediare le notifiche dell'observer.
     Inserisci_appello invece, non richiede observer e quindi non utilizziamo il mediator.
     SCELTA PROGETTUALE

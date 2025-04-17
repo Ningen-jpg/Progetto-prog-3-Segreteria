@@ -1,3 +1,5 @@
+package Observer;
+
 @SuppressWarnings("ALL")
 
 interface Observer {

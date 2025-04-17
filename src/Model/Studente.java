@@ -1,3 +1,6 @@
+package Model;
+import Mediator.Mediator;
+import Mediator.NotificationService;
 import javax.swing.*;
 import java.sql.*;
 @SuppressWarnings("ALL")

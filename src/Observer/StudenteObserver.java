@@ -1,3 +1,5 @@
+package Observer;
+
 import java.util.*;
 @SuppressWarnings("ALL")
 public class StudenteObserver implements Observer {
@@ -16,7 +18,7 @@ public class StudenteObserver implements Observer {
         if (notificheEsistenti != null) {
             for (Notifica n : notificheEsistenti) {
                 if (n.getEsame().equals(esame) && n.getVoto().equals(voto) && n.getData().equals(data)) {
-                    System.out.println("DEBUG: Notifica duplicata rilevata per " + matricola + " - " + esame);
+                    System.out.println("DEBUG: Observer.Notifica duplicata rilevata per " + matricola + " - " + esame);
                     return;
                 }
             }

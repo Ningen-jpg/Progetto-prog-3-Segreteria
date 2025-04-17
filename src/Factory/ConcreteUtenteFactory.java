@@ -1,8 +1,15 @@
+package Factory;
+
+import Model.Docente;
+import Model.Segreteria;
+import Model.Studente;
+import Model.Utente;
+
 @SuppressWarnings("ALL")
 //implementazione del factory method pattern
 
 public class ConcreteUtenteFactory {
-    public static Utente getUtente (String tipoUtente, String id,String password, String nome, String cognome)
+    public static Utente getUtente (String tipoUtente, String id, String password, String nome, String cognome)
     {
         if (tipoUtente == null)
         {

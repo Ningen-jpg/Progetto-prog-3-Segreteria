@@ -1,3 +1,5 @@
+package Mediator;
+import Observer.DocenteSubject;
 /*
     Interfaccia per il mediator
  */

@@ -1,3 +1,7 @@
+package Mediator;
+import Observer.DocenteSubject;
+import Observer.StudenteObserver;
+import Observer.Notifica;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -5,10 +9,7 @@ import javax.swing.*;
 @SuppressWarnings("ALL")
 
 public class NotificationService implements Mediator {
-    private Map<String, Observer> partecipanti = new HashMap<>();
     StudenteObserver observer = new StudenteObserver();
-    // per aggiungere un nuovo osservatore
-
 
     // verrà richiamato dai Docenti
     @Override
@@ -131,7 +132,7 @@ public class NotificationService implements Mediator {
             // Mostra gli studenti senza voto
             String studentiDisplay = studentiList.toString();
             String matricolaSelezionata = (String) JOptionPane.showInputDialog(null, studentiDisplay,
-                    "Seleziona Studente", JOptionPane.QUESTION_MESSAGE);
+                    "Seleziona Model.Studente", JOptionPane.QUESTION_MESSAGE);
 
             if (matricolaSelezionata == null || matricolaSelezionata.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Operazione annullata", "Info", JOptionPane.INFORMATION_MESSAGE);
@@ -163,7 +164,7 @@ public class NotificationService implements Mediator {
             statement.setString(5, esameTrovato);
             statement.executeUpdate();
 
-            // Notifica lo Studente con Observer (per notifiche in tempo reale)
+            // Observer.Notifica lo Model.Studente con Observer (per notifiche in tempo reale)
             docenteSubject.notifyObservers(matricolaSelezionata, esameTrovato, voto);
 
         } catch (SQLException e) {
@@ -214,7 +215,7 @@ public class NotificationService implements Mediator {
 
                 notificaButton.addActionListener(e -> {
                     JOptionPane.showMessageDialog(null,
-                            "Notifica selezionata:\nID: " + id);
+                            "Observer.Notifica selezionata:\nID: " + id);
                     String[] opzioni = {"Accetta", "Rifiuta"};
                     String messaggio = "Cosa vuoi fare ?";
                     int scelta = JOptionPane.showOptionDialog(
@@ -280,7 +281,7 @@ public class NotificationService implements Mediator {
 
                 notifichePanel.add(notificaButton);
 
-                // Notifica anche l'observer per mantenere lo stato in memoria aggiornato
+                // Observer.Notifica anche l'observer per mantenere lo stato in memoria aggiornato
                 if (observer != null) {
                     List<Notifica> notifiche = observer.getNotifiche(matricola);
                     Iterator<Notifica> iterator = notifiche.iterator();

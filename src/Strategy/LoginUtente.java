@@ -1,3 +1,5 @@
+package Strategy;
+
 /*
     Interfaccia Strategy Pattern del login
 

@@ -1,3 +1,5 @@
+package Model;
+
 @SuppressWarnings("ALL")
 public abstract class Utente {
     protected String id;
