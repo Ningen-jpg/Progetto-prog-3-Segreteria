@@ -106,6 +106,7 @@ public class App {
 
         segreteriaPanel.addAccessButtonListener(e -> {
             segreteriaPanel.openSegreteriaFrame();
+            segreteriaFrame = segreteriaPanel.getLoginFrame();
             segreteriaPanel.addLoginButtonListener(f -> {
                 String id  = segreteriaPanel.getId();
                 String pw  = segreteriaPanel.getPassword();
@@ -451,8 +452,6 @@ public class App {
         }
         docenteFrame.setVisible(true);
     }
-
-
 
     // Metodi per mostrare le funzionalità dopo il login
     private static void showStudenteFunctionality(String matricola) {

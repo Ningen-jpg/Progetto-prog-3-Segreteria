@@ -81,4 +81,9 @@ public class SegreteriaPanel extends JPanel {
         loginButton.addActionListener(l);
     }
 
+    // in SegreteriaPanel.java
+    public JFrame getLoginFrame() {
+        return segreteriaFrame;
+    }
+
 }
