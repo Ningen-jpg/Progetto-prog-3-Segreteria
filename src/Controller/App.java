@@ -10,7 +10,9 @@ import Strategy.LoginDocente;
 import Strategy.LoginSegreteria;
 import Strategy.LoginStudente;
 import Strategy.LoginUtente;
+import View.DocentePanel;
 import View.SegreteriaPanel;
+import View.StudentePanel;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -21,14 +23,20 @@ public class App {
     // Frame principale dell'applicazione che mostra i pulsanti per scegliere il
     // tipo di utente (Model.Studente/Model.Docente/Model.Segreteria)
     private static JFrame mainFrame;
+
     // Frame che gestisce il login e le funzionalità dello studente
     private static JFrame studenteFrame;
+
     // Frame che gestisce il login e le funzionalità del docente
     private static JFrame docenteFrame;
+
     // Frame che gestisce il login e le funzionalità della segreteria
     private static JFrame segreteriaFrame;
+
     private static DefaultTableModel studentiTableModel;
     private static JTable studentiTable;
+    private static SegreteriaPanel segreteriaPanel;
+
 
     // Variabili per tenere traccia degli utenti correnti
     private static Utente studenteCorrente = null;
@@ -61,9 +69,12 @@ public class App {
 
         // Pannello per i pulsanti
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout(20, 0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // View Segreteria
-        SegreteriaPanel.pannelloSegreteria();
+        SegreteriaPanel segreteriaPanel = new SegreteriaPanel();
+        buttonPanel.add(segreteriaPanel, BorderLayout.WEST);
 
         // Linea divisoria verticale
         JSeparator separator = new JSeparator(JSeparator.VERTICAL);
@@ -71,36 +82,9 @@ public class App {
         buttonPanel.add(separator, BorderLayout.CENTER);
 
         // Pannello destro per i pulsanti Model.Docente e Model.Studente
-        JPanel rightPanel = new JPanel();
-        rightPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0, 5, 0, 5);
-
-        JButton docenteButton = new JButton("Docente");
-        docenteButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        docenteButton.setPreferredSize(new Dimension(150, 40));
-        docenteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openDocenteFrame();
-            }
-        });
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        rightPanel.add(docenteButton, gbc);
-
-        JButton studenteButton = new JButton("Studente");
-        studenteButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        studenteButton.setPreferredSize(new Dimension(150, 40));
-        studenteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openStudenteFrame();
-            }
-        });
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        rightPanel.add(studenteButton, gbc);
+        JPanel rightPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        rightPanel.add(new DocentePanel());
+        rightPanel.add(new StudentePanel());
 
         buttonPanel.add(rightPanel, BorderLayout.EAST);
 
@@ -109,13 +93,38 @@ public class App {
         // Crediti
         JLabel creditsLabel = new JLabel(
                 "Realizzato da: Guadagnuolo Alessandro 0124001570 | Merola Domenico 0124001705", SwingConstants.CENTER);
-        creditsLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        creditsLabel.setFont(new Font("Arial", Font.ITALIC, 14));
         creditsLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(creditsLabel, BorderLayout.SOUTH);
 
         // Aggiungo il pannello alla finestra
-        mainFrame.add(mainPanel);
+        mainFrame.getContentPane().add(mainPanel);
+
+        //mainFrame.pack(); //effettua il resize automatico in base al contenuto
+
         mainFrame.setVisible(true);
+
+        segreteriaPanel.addAccessButtonListener(e -> {
+            segreteriaPanel.openSegreteriaFrame();
+            segreteriaPanel.addLoginButtonListener(f -> {
+                String id  = segreteriaPanel.getId();
+                String pw  = segreteriaPanel.getPassword();
+
+                if (loginSegreteria(id, pw)) {
+                    // Accesso riuscito: apro la funzionalità Segreteria
+                    showSegreteriaFunctionality(id);
+                    segreteriaFrame.revalidate();
+                    segreteriaFrame.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(
+                            segreteriaFrame,
+                            "ID o password errati",
+                            "Errore login",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            });
+        });
     }
 
     // Metodo per aggiornare la lista degli studenti
@@ -754,7 +763,7 @@ public class App {
                 segreteriaCorrente = null;
                 frame.dispose();
                 segreteriaFrame = null;
-                SegreteriaPanel.openSegreteriaFrame();
+                segreteriaPanel.openSegreteriaFrame();
                 break;
         }
         if (loginStrategy != null) {
