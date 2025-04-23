@@ -1,5 +1,7 @@
 package View;
 
+import Model.Segreteria;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -11,6 +13,10 @@ public class SegreteriaPanel extends JPanel {
     JPanel buttonPanel = new JPanel();
     JPanel panel = new JPanel();
     JButton infoStudenteButton;
+    JButton esitiTestButton;
+    JButton esitiCorsoButton;
+    JButton logoutButton;
+    JPanel logoutPanel;
 
     public SegreteriaPanel() {
         setLayout(new BorderLayout(20, 0));
@@ -40,6 +46,40 @@ public class SegreteriaPanel extends JPanel {
         studentiButton = new JButton("Gestione Studenti");
 
         infoStudenteButton = new JButton("Visualizza informazioni studente");
+
+        esitiTestButton = new JButton("Visualizza esiti corso");
+
+        esitiCorsoButton = new JButton("Visualizza esiti corso di Laurea");
+
+        logoutButton = new JButton("Disconnetti");
+
+        logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    }
+
+    public void mostraInfo(String testo, String titolo){
+
+        JTextArea textArea = new JTextArea(testo);
+        textArea.setEditable(false);
+        JOptionPane.showMessageDialog(this, textArea, titolo,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void mostraEsitiEsame(String testo, String titolo){
+        JTextArea textArea = new JTextArea(testo);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(400, 300));
+        JOptionPane.showMessageDialog(this, scrollPane, titolo,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void mostraEsitiCorso(String testo, String titolo){
+        JTextArea textArea = new JTextArea(testo);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(400, 300));
+        JOptionPane.showMessageDialog(this, scrollPane, titolo,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public JButton getStudentiButton() { return studentiButton; }
@@ -51,4 +91,12 @@ public class SegreteriaPanel extends JPanel {
     public JPanel getPanel() { return panel; }
 
     public JButton getInfoStudenteButton(){ return infoStudenteButton; }
+
+    public JButton getEsitiTestButton() { return esitiTestButton; }
+
+    public JButton getEsitiCorsoButton(){ return esitiCorsoButton; }
+
+    public JButton getLogoutButton() { return logoutButton; }
+
+    public JPanel getLogoutPanel() { return logoutPanel; }
 }

@@ -703,71 +703,52 @@ public class App {
                         "Inserisci la matricola dello studente:");
                 if (matricola != null && !matricola.trim().isEmpty()) {
                     String result = Segreteria.visualizza_informazioni(matricola);
-                    JTextArea textArea = new JTextArea(result);
-                    textArea.setEditable(false);
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(segreteriaFrame, scrollPane, "Informazioni Studente",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    segreteriaPanel.mostraInfo(result, "Informazioni Studente");
                 }
             }
         });
         segreteriaPanel.getButtonPanel().add(segreteriaPanel.getInfoStudenteButton());
 
         // Pulsante Visualizza Esiti Test per Corso
-        JButton esitiTestButton = new JButton("Visualizza gli esiti dei test per singolo corso");
-        esitiTestButton.addActionListener(new ActionListener() {
+        segreteriaPanel.getEsitiTestButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nomeCorso = JOptionPane.showInputDialog(segreteriaFrame, "Inserisci il nome del corso:");
                 if (nomeCorso != null && !nomeCorso.trim().isEmpty()) {
                     String result = Segreteria.visualizza_esiti(nomeCorso);
-                    JTextArea textArea = new JTextArea(result);
-                    textArea.setEditable(false);
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(segreteriaFrame, scrollPane, "Esiti Esame",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    segreteriaPanel.mostraEsitiEsame(result,"Esiti esame");
                 }
             }
         });
-        segreteriaPanel.getButtonPanel().add(esitiTestButton);
+        segreteriaPanel.getButtonPanel().add(segreteriaPanel.getEsitiTestButton());
 
         // Pulsante Visualizza Esiti per Corso di Laurea
-        JButton esitiCorsoButton = new JButton("Visualizza gli esiti per un intero Corso di Laurea");
-        esitiCorsoButton.addActionListener(new ActionListener() {
+        segreteriaPanel.getEsitiCorsoButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nomeCorso = JOptionPane.showInputDialog(segreteriaFrame,
                         "Inserisci il nome del corso di laurea:");
                 if (nomeCorso != null && !nomeCorso.trim().isEmpty()) {
                     String result = Segreteria.visualizza_esiti_corso(nomeCorso);
-                    JTextArea textArea = new JTextArea(result);
-                    textArea.setEditable(false);
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(segreteriaFrame, scrollPane, "Esiti Corso di Laurea",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    segreteriaPanel.mostraEsitiCorso(result,"Esiti corso");
                 }
             }
         });
-        segreteriaPanel.getButtonPanel().add(esitiCorsoButton);
+        segreteriaPanel.getButtonPanel().add( segreteriaPanel.getEsitiCorsoButton());
 
         segreteriaPanel.getPanel().add(segreteriaPanel.getButtonPanel(), BorderLayout.CENTER);
 
         // Modifica il pulsante logout
-        JButton logoutButton = new JButton("Disconnetti");
-        logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        logoutButton.addActionListener(new ActionListener() {
+        segreteriaPanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        segreteriaPanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 effettuaLogout("segreteria", segreteriaFrame);
             }
         });
 
-        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        logoutPanel.add(logoutButton);
-        segreteriaPanel.getPanel().add(logoutPanel, BorderLayout.SOUTH);
+        segreteriaPanel.getLogoutPanel().add(segreteriaPanel.getLogoutButton());
+        segreteriaPanel.getPanel().add(segreteriaPanel.getLogoutPanel(), BorderLayout.SOUTH);
 
         segreteriaFrame.add(segreteriaPanel.getPanel());
         segreteriaFrame.revalidate();
