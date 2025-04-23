@@ -73,7 +73,7 @@ public class App {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // View Segreteria
-        SegreteriaPanel segreteriaPanel = new SegreteriaPanel();
+        segreteriaPanel = new SegreteriaPanel();
         buttonPanel.add(segreteriaPanel, BorderLayout.WEST);
 
         // Linea divisoria verticale
@@ -97,6 +97,8 @@ public class App {
         creditsLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(creditsLabel, BorderLayout.SOUTH);
 
+        segreteriaPanel.getSegreteriaButton().addActionListener(e -> openSegreteriaFrame());
+
         // Aggiungo il pannello alla finestra
         mainFrame.getContentPane().add(mainPanel);
 
@@ -104,28 +106,75 @@ public class App {
 
         mainFrame.setVisible(true);
 
-        segreteriaPanel.addAccessButtonListener(e -> {
-            segreteriaPanel.openSegreteriaFrame();
-            segreteriaFrame = segreteriaPanel.getLoginFrame();
-            segreteriaPanel.addLoginButtonListener(f -> {
-                String id  = segreteriaPanel.getId();
-                String pw  = segreteriaPanel.getPassword();
+    }
 
-                if (loginSegreteria(id, pw)) {
-                    // Accesso riuscito: apro la funzionalità Segreteria
-                    showSegreteriaFunctionality(id);
-                    segreteriaFrame.revalidate();
-                    segreteriaFrame.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(
-                            segreteriaFrame,
-                            "ID o password errati",
-                            "Errore login",
-                            JOptionPane.ERROR_MESSAGE
-                    );
+    private static void openSegreteriaFrame() {
+        if (segreteriaFrame == null) {
+            segreteriaFrame = new JFrame("Login Segreteria");
+            segreteriaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            segreteriaFrame.setSize(400, 300);
+            segreteriaFrame.setLocationRelativeTo(null);
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Titolo
+            JLabel titleLabel = new JLabel("Area Segreteria", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            panel.add(titleLabel, BorderLayout.NORTH);
+
+            // Pannello per il login
+            JPanel loginPanel = new JPanel();
+            loginPanel.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            // Campo ID
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            loginPanel.add(new JLabel("ID Segreteria:"), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            JTextField idField = new JTextField(15);
+            loginPanel.add(idField, gbc);
+
+            // Campo password
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            loginPanel.add(new JLabel("Password:"), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            JPasswordField passwordField = new JPasswordField(15);
+            loginPanel.add(passwordField, gbc);
+
+            // Pulsante login
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            JButton loginButton = new JButton("Login");
+            loginButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String id = idField.getText();
+                    String password = new String(passwordField.getPassword());
+
+                    if (loginSegreteria(id, password)) {
+                        // Login riuscito, mostra le funzionalità della segreteria
+                        showSegreteriaFunctionality(id);
+                    }
                 }
             });
-        });
+            loginPanel.add(loginButton, gbc);
+
+            panel.add(loginPanel, BorderLayout.CENTER);
+            segreteriaFrame.add(panel);
+        }
+        segreteriaFrame.setVisible(true);
     }
 
     // Metodo per aggiornare la lista degli studenti
@@ -635,33 +684,19 @@ public class App {
         // Rimuovo il pannello di login
         segreteriaFrame.getContentPane().removeAll();
 
-        // Creo un nuovo pannello per le funzionalità
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        segreteriaPanel.showGestioneStudentiView();
 
-        // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Segreteria", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(titleLabel, BorderLayout.NORTH);
-
-        // Pannello per i pulsanti delle funzionalità
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
-
-        // Pulsante Gestione Studenti
-        JButton studentiButton = new JButton("Gestione Studenti");
-        studentiButton.addActionListener(new ActionListener() {
+        segreteriaPanel.getStudentiButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showGestioneStudenti();
             }
         });
-        buttonPanel.add(studentiButton);
+        segreteriaPanel.getButtonPanel().add(segreteriaPanel.getStudentiButton());
 
         // Pulsante Visualizza Informazioni Studente
-        JButton infoStudenteButton = new JButton("Visualizza informazioni studente");
-        infoStudenteButton.addActionListener(new ActionListener() {
+
+        segreteriaPanel.getInfoStudenteButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String matricola = JOptionPane.showInputDialog(segreteriaFrame,
@@ -677,7 +712,7 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(infoStudenteButton);
+        segreteriaPanel.getButtonPanel().add(segreteriaPanel.getInfoStudenteButton());
 
         // Pulsante Visualizza Esiti Test per Corso
         JButton esitiTestButton = new JButton("Visualizza gli esiti dei test per singolo corso");
@@ -696,7 +731,7 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(esitiTestButton);
+        segreteriaPanel.getButtonPanel().add(esitiTestButton);
 
         // Pulsante Visualizza Esiti per Corso di Laurea
         JButton esitiCorsoButton = new JButton("Visualizza gli esiti per un intero Corso di Laurea");
@@ -716,9 +751,9 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(esitiCorsoButton);
+        segreteriaPanel.getButtonPanel().add(esitiCorsoButton);
 
-        panel.add(buttonPanel, BorderLayout.CENTER);
+        segreteriaPanel.getPanel().add(segreteriaPanel.getButtonPanel(), BorderLayout.CENTER);
 
         // Modifica il pulsante logout
         JButton logoutButton = new JButton("Disconnetti");
@@ -732,9 +767,9 @@ public class App {
 
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         logoutPanel.add(logoutButton);
-        panel.add(logoutPanel, BorderLayout.SOUTH);
+        segreteriaPanel.getPanel().add(logoutPanel, BorderLayout.SOUTH);
 
-        segreteriaFrame.add(panel);
+        segreteriaFrame.add(segreteriaPanel.getPanel());
         segreteriaFrame.revalidate();
         segreteriaFrame.repaint();
     }
@@ -762,7 +797,7 @@ public class App {
                 segreteriaCorrente = null;
                 frame.dispose();
                 segreteriaFrame = null;
-                segreteriaPanel.openSegreteriaFrame();
+                openSegreteriaFrame();
                 break;
         }
         if (loginStrategy != null) {

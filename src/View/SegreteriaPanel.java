@@ -1,89 +1,54 @@
 package View;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class SegreteriaPanel extends JPanel {
     private JButton segreteriaButton = new JButton("Segreteria");
-    private JFrame loginFrame;
-    private JTextField idField;
-    private JPasswordField passwordField;
-    private JButton loginButton;
-    private static JFrame segreteriaFrame;
+    private JButton studentiButton;
+    JPanel buttonPanel = new JPanel();
+    JPanel panel = new JPanel();
+    JButton infoStudenteButton;
 
     public SegreteriaPanel() {
         setLayout(new BorderLayout(20, 0));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        segreteriaButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        segreteriaButton.setPreferredSize(new Dimension(150, 40));
+        segreteriaButton.setFont(new Font("Arial",Font.PLAIN,14));
+        segreteriaButton.setPreferredSize(new Dimension(150,40));
         leftPanel.add(segreteriaButton);
         add(leftPanel, BorderLayout.WEST);
     }
 
-    public void openSegreteriaFrame() {
-        if (segreteriaFrame == null) {
-            segreteriaFrame = new JFrame("Login Segreteria");
-            segreteriaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            segreteriaFrame.setSize(400, 300);
-            segreteriaFrame.setLocationRelativeTo(null);
+    public void showGestioneStudentiView() {
+        // Creo un nuovo pannello per le funzionalità
 
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-            JLabel titleLabel = new JLabel("Area Segreteria", SwingConstants.CENTER);
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            panel.add(titleLabel, BorderLayout.NORTH);
+        panel.setLayout(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            JPanel loginPanel = new JPanel(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
+        // Titolo
+        JLabel titleLabel = new JLabel("Funzionalità Segreteria", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        panel.add(titleLabel, BorderLayout.NORTH);
 
-            gbc.gridx = 0; gbc.gridy = 0;
-            loginPanel.add(new JLabel("ID Segreteria:"), gbc);
-            gbc.gridx = 1;
-            idField = new JTextField(15);
-            loginPanel.add(idField, gbc);
+        // Pannello per i pulsanti delle funzionalità
 
-            gbc.gridx = 0; gbc.gridy = 1;
-            loginPanel.add(new JLabel("Password:"), gbc);
-            gbc.gridx = 1;
-            passwordField = new JPasswordField(15);
-            loginPanel.add(passwordField, gbc);
+        buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
 
-            gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            loginButton = new JButton("Login");
-            loginPanel.add(loginButton, gbc);
+        // Pulsante Gestione Studenti
+        studentiButton = new JButton("Gestione Studenti");
 
-            panel.add(loginPanel, BorderLayout.CENTER);
-            segreteriaFrame.add(panel);
-        }
-        segreteriaFrame.setVisible(true);
+        infoStudenteButton = new JButton("Visualizza informazioni studente");
     }
 
-    // Getters per i campi login
-    public String getId() {
-        return idField.getText();
-    }
+    public JButton getStudentiButton() { return studentiButton; }
 
-    public String getPassword() {
-        return new String(passwordField.getPassword());
-    }
+    public JButton getSegreteriaButton() { return segreteriaButton; }
 
-    // Listener da aggiungere esternamente
-    public void addAccessButtonListener(ActionListener l) {
-        segreteriaButton.addActionListener(l);
-    }
+    public JPanel getButtonPanel() { return buttonPanel; }
 
-    public void addLoginButtonListener(ActionListener l) {
-        loginButton.addActionListener(l);
-    }
+    public JPanel getPanel() { return panel; }
 
-    // in SegreteriaPanel.java
-    public JFrame getLoginFrame() {
-        return segreteriaFrame;
-    }
-
+    public JButton getInfoStudenteButton(){ return infoStudenteButton; }
 }
