@@ -1,11 +1,6 @@
 package View;
-
-import Model.Segreteria;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class SegreteriaPanel extends JPanel {
     private JButton segreteriaButton = new JButton("Segreteria");
