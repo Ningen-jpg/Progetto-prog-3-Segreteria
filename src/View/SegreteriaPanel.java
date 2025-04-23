@@ -1,17 +1,23 @@
 package View;
 import javax.swing.*;
 import java.awt.*;
+import Controller.App;
 
 public class SegreteriaPanel extends JPanel {
     private JButton segreteriaButton = new JButton("Segreteria");
     private JButton studentiButton;
-    JPanel buttonPanel = new JPanel();
-    JPanel panel = new JPanel();
-    JButton infoStudenteButton;
-    JButton esitiTestButton;
-    JButton esitiCorsoButton;
-    JButton logoutButton;
-    JPanel logoutPanel;
+    private JPanel buttonPanel = new JPanel();
+    private JPanel panel = new JPanel();
+    private JButton infoStudenteButton;
+    private JButton esitiTestButton;
+    private JButton esitiCorsoButton;
+    private JButton logoutButton;
+    private JPanel logoutPanel;
+    private JPanel loginPanel;
+    private JButton loginButton;
+    private JTextField idField;
+    private JPasswordField passwordField;
+    GridBagConstraints gbc;
 
     public SegreteriaPanel() {
         setLayout(new BorderLayout(20, 0));
@@ -20,6 +26,61 @@ public class SegreteriaPanel extends JPanel {
         segreteriaButton.setPreferredSize(new Dimension(150,40));
         leftPanel.add(segreteriaButton);
         add(leftPanel, BorderLayout.WEST);
+    }
+
+    public void showSegreteriaFrame(JFrame frame) {
+        if (App.segreteriaFrame == null) {
+            App.segreteriaFrame = new JFrame("Login Segreteria");
+            App.segreteriaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            App.segreteriaFrame.setSize(400, 300);
+            App.segreteriaFrame.setLocationRelativeTo(null);
+
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Titolo
+            JLabel titleLabel = new JLabel("Area Segreteria", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            panel.add(titleLabel, BorderLayout.NORTH);
+
+            // Pannello per il login
+            loginPanel = new JPanel();
+            loginPanel.setLayout(new GridBagLayout());
+            gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            // Campo ID
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            loginPanel.add(new JLabel("ID Segreteria:"), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            idField = new JTextField(15);
+            loginPanel.add(idField, gbc);
+
+            // Campo password
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            loginPanel.add(new JLabel("Password:"), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            passwordField = new JPasswordField(15);
+            loginPanel.add(passwordField, gbc);
+
+            // Pulsante login
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            loginButton = new JButton("Login");
+            loginPanel.add(loginButton, gbc);
+            panel.add(loginPanel, BorderLayout.CENTER);
+            App.segreteriaFrame.add(panel);
+        }
     }
 
     public void showGestioneStudentiView() {
@@ -94,4 +155,15 @@ public class SegreteriaPanel extends JPanel {
     public JButton getLogoutButton() { return logoutButton; }
 
     public JPanel getLogoutPanel() { return logoutPanel; }
+
+    public JButton getLoginButton(){ return loginButton; }
+
+    public JTextField getIdField() { return idField; }
+
+    public JPasswordField getPasswordField() { return passwordField; }
+
+    public JPanel getLoginPanel() { return loginPanel; }
+
+    public GridBagConstraints getGbc() { return gbc; }
 }
+
