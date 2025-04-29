@@ -39,7 +39,6 @@ public class App {
     private static DocentePanel docentePanel;
     private static StudentePanel studentePanel;
 
-
     // Variabili per tenere traccia degli utenti correnti
     private static Utente studenteCorrente = null;
     private static Utente docenteCorrente = null;
@@ -373,6 +372,7 @@ public class App {
 
     private static void openDocenteFrame() {
         docentePanel.showDocenteFrame(docenteFrame);
+
         docentePanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

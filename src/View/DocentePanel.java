@@ -78,7 +78,7 @@ public class DocentePanel extends JPanel{
             gbc.gridy = 2;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            JButton loginButton = new JButton("Login");
+            loginButton = new JButton("Login");
             loginPanel.add(loginButton, gbc);
             panel.add(loginPanel, BorderLayout.CENTER);
             App.docenteFrame.add(panel);
