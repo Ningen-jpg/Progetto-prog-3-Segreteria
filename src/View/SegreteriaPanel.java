@@ -17,15 +17,15 @@ public class SegreteriaPanel extends JPanel {
     private JButton loginButton;
     private JTextField idField;
     private JPasswordField passwordField;
-    GridBagConstraints gbc;
+    private GridBagConstraints gbc;
 
     public SegreteriaPanel() {
         setLayout(new BorderLayout(20, 0));
-        JPanel leftPanel = new JPanel(new GridBagLayout());
+        panel = new JPanel(new GridBagLayout());
         segreteriaButton.setFont(new Font("Arial",Font.PLAIN,14));
-        segreteriaButton.setPreferredSize(new Dimension(150,40));
-        leftPanel.add(segreteriaButton);
-        add(leftPanel, BorderLayout.WEST);
+        segreteriaButton.setPreferredSize(new Dimension(140,60));
+        panel.add(segreteriaButton);
+        add(panel);
     }
 
     public void showSegreteriaFrame(JFrame frame) {

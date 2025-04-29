@@ -39,8 +39,12 @@ public class Studente extends Utente {
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            String nome_esame = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:").toUpperCase();
-
+            String nome_esame = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:");
+            if (nome_esame == null){
+                //operazione annullata
+                return;
+            }
+            nome_esame.toUpperCase();
             //Verifico se ho già sostenuto l'esame
             String queryVerifica = "SELECT 1 " +
                     " FROM esito " +

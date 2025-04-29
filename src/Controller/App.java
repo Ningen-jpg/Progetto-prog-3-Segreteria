@@ -25,10 +25,10 @@ public class App {
     private static JFrame mainFrame;
 
     // Frame che gestisce il login e le funzionalità dello studente
-    private static JFrame studenteFrame;
+    public static JFrame studenteFrame;
 
     // Frame che gestisce il login e le funzionalità del docente
-    private static JFrame docenteFrame;
+    public static JFrame docenteFrame;
 
     // Frame che gestisce il login e le funzionalità della segreteria
     public static JFrame segreteriaFrame;
@@ -372,71 +372,19 @@ public class App {
     }
 
     private static void openDocenteFrame() {
-        if (docenteFrame == null) {
-            docenteFrame = new JFrame("Login Docente");
-            docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            docenteFrame.setSize(400, 300);
-            docenteFrame.setLocationRelativeTo(null);
+        docentePanel.showDocenteFrame(docenteFrame);
+        docentePanel.getLoginButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = docentePanel.getIdField().getText();
+                String password = new String(docentePanel.getPasswordField().getPassword());
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-            // Titolo
-            JLabel titleLabel = new JLabel("Area Docenti", SwingConstants.CENTER);
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            panel.add(titleLabel, BorderLayout.NORTH);
-
-            // Pannello per il login
-            JPanel loginPanel = new JPanel();
-            loginPanel.setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-
-            // Campo ID
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            loginPanel.add(new JLabel("ID Docente:"), gbc);
-
-            gbc.gridx = 1;
-            gbc.gridy = 0;
-            JTextField idField = new JTextField(15);
-            loginPanel.add(idField, gbc);
-
-            // Campo password
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            loginPanel.add(new JLabel("Password:"), gbc);
-
-            gbc.gridx = 1;
-            gbc.gridy = 1;
-            JPasswordField passwordField = new JPasswordField(15);
-            loginPanel.add(passwordField, gbc);
-
-            // Pulsante login
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            JButton loginButton = new JButton("Login");
-            loginButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String id = idField.getText();
-                    String password = new String(passwordField.getPassword());
-
-                    if (loginDocente(id, password)) {
-                        // Login riuscito, mostra le funzionalità del docente
-                        showDocenteFunctionality(id);
-                    }
+                if (loginDocente(id, password)) {
+                    // Login riuscito, mostra le funzionalità del docente
+                    showDocenteFunctionality(id);
                 }
-            });
-            loginPanel.add(loginButton, gbc);
-
-            panel.add(loginPanel, BorderLayout.CENTER);
-            docenteFrame.add(panel);
-        }
+            }
+        });
         docenteFrame.setVisible(true);
     }
 
@@ -467,22 +415,18 @@ public class App {
         studenteFrame.getContentPane().removeAll();
 
         // Creo un nuovo pannello per le funzionalità
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        studentePanel.getPanel().setLayout(new BorderLayout());
+        studentePanel.getPanel().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Studente", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        studentePanel.getTitleLabel().setFont(new Font("Arial", Font.BOLD, 18));
+        studentePanel.getPanel().add(studentePanel.getTitleLabel(), BorderLayout.NORTH);
 
         // Pannello per i pulsanti delle funzionalità
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        studentePanel.getButtonPanel().setLayout(new GridLayout(3, 1, 10, 10));
 
         // Pulsante Prenotazione
-        JButton prenotazioneButton = new JButton("Prenota Esame");
-        prenotazioneButton.addActionListener(new ActionListener() {
+        studentePanel.getPrenotazioneButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implementazione della prenotazione
@@ -496,11 +440,10 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(prenotazioneButton);
+        studentePanel.getButtonPanel().add(studentePanel.getPrenotazioneButton());
 
         // Pulsante Gestione Notifiche
-        JButton notificheButton = new JButton("Notifiche");
-        notificheButton.addActionListener(new ActionListener() {
+        studentePanel.getNotificheButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Implementazione della gestione notifiche
@@ -514,11 +457,10 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(notificheButton);
+        studentePanel.getButtonPanel().add(studentePanel.getNotificheButton());
 
         // Pulsante Effettua Test
-        JButton testButton = new JButton("Effettua Test");
-        testButton.addActionListener(new ActionListener() {
+        studentePanel.getTestButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (studenteCorrente instanceof Studente) {
@@ -531,25 +473,22 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(testButton);
-
-        panel.add(buttonPanel, BorderLayout.CENTER);
+        studentePanel.getButtonPanel().add(studentePanel.getTestButton());
+        studentePanel.getPanel().add(studentePanel.getButtonPanel(), BorderLayout.CENTER);
 
         // Modifica il pulsante logout
-        JButton logoutButton = new JButton("Disconnetti");
-        logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        logoutButton.addActionListener(new ActionListener() {
+        studentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        studentePanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 effettuaLogout("studente", studenteFrame);
             }
         });
 
-        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        logoutPanel.add(logoutButton);
-        panel.add(logoutPanel, BorderLayout.SOUTH);
+        studentePanel.getLogoutPanel().add(studentePanel.getLogoutButton());
+        studentePanel.getPanel().add(studentePanel.getLogoutPanel(), BorderLayout.SOUTH);
 
-        studenteFrame.add(panel);
+        studenteFrame.add(studentePanel.getPanel());
         studenteFrame.revalidate();
         studenteFrame.repaint();
     }
@@ -562,22 +501,18 @@ public class App {
         docenteFrame.getContentPane().removeAll();
 
         // Creo un nuovo pannello per le funzionalità
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        docentePanel.getPanel().setLayout(new BorderLayout());
+        docentePanel.getPanel().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Titolo
-        JLabel titleLabel = new JLabel("Funzionalità Docente", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(titleLabel, BorderLayout.NORTH);
+        docentePanel.getTitleLabel().setFont(new Font("Arial", Font.BOLD, 18));
+        docentePanel.getPanel().add(docentePanel.getTitleLabel(), BorderLayout.NORTH);
 
         // Pannello per i pulsanti delle funzionalità
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10));
+        docentePanel.getButtonPanel().setLayout(new GridLayout(2, 1, 10, 10));
 
         // Pulsante Inserisci Appello
-        JButton appelloButton = new JButton("Inserisci Appello");
-        appelloButton.addActionListener(new ActionListener() {
+        docentePanel.getAppelloButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Chiamata al metodo inserisci_appello della classe Docente
@@ -591,12 +526,10 @@ public class App {
                 }
             }
         });
-        buttonPanel.add(appelloButton);
+        docentePanel.getButtonPanel().add(docentePanel.getAppelloButton());
 
         // Pulsante Inserisci Voto
-        JButton votoButton = new JButton("Inserisci Voto");
-
-        votoButton.addActionListener(new ActionListener() {
+        docentePanel.getVotoButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (docenteCorrente instanceof Docente) {
@@ -610,25 +543,22 @@ public class App {
             }
         });
 
-        buttonPanel.add(votoButton);
-
-        panel.add(buttonPanel, BorderLayout.CENTER);
+        docentePanel.getButtonPanel().add(docentePanel.getVotoButton());
+        docentePanel.getPanel().add(docentePanel.getButtonPanel(), BorderLayout.CENTER);
 
         // Modifica il pulsante logout
-        JButton logoutButton = new JButton("Disconnetti");
-        logoutButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        logoutButton.addActionListener(new ActionListener() {
+        docentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        docentePanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 effettuaLogout("docente", docenteFrame);
             }
         });
 
-        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        logoutPanel.add(logoutButton);
-        panel.add(logoutPanel, BorderLayout.SOUTH);
+        docentePanel.getLogoutPanel().add(docentePanel.getLogoutButton());
+        docentePanel.getPanel().add(docentePanel.getLogoutPanel(), BorderLayout.SOUTH);
 
-        docenteFrame.add(panel);
+        docenteFrame.add(docentePanel.getPanel());
         docenteFrame.revalidate();
         docenteFrame.repaint();
     }
