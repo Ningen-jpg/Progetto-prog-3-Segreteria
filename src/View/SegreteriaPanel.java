@@ -21,11 +21,11 @@ public class SegreteriaPanel extends JPanel {
 
     public SegreteriaPanel() {
         setLayout(new BorderLayout(20, 0));
-        panel = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
         segreteriaButton.setFont(new Font("Arial",Font.PLAIN,14));
-        segreteriaButton.setPreferredSize(new Dimension(140,60));
+        segreteriaButton.setPreferredSize(new Dimension(130,60));
         panel.add(segreteriaButton);
-        add(panel);
+        add(panel, BorderLayout.WEST);
     }
 
     public void showSegreteriaFrame(JFrame frame) {

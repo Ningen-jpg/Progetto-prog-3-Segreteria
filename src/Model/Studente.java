@@ -30,122 +30,112 @@ public class Studente extends Utente {
     }
 
     public void effettuaPrenotazione(String matricola) {
-
         Connection conn = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-
         try {
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            String nome_esame = JOptionPane.showInputDialog(null, "Inserisci il nome dell'esame:");
-            if (nome_esame == null){
-                //operazione annullata
-                return;
-            }
-            nome_esame.toUpperCase();
-            //Verifico se ho già sostenuto l'esame
-            String queryVerifica = "SELECT 1 " +
-                    " FROM esito " +
-                    " JOIN appello ON esito.appello_fk = appello.id " +
-                    " JOIN esame ON appello.esame_fk = esame.id " +
-                    " WHERE esame.nome = ? AND esito.studente_fk = ? AND esito.conferma = true";
-
-            statement = conn.prepareStatement(queryVerifica);
-            statement.setString(1, nome_esame);
-            statement.setString(2, matricola);
-            rs = statement.executeQuery();
-            if (rs.next()) {
-                JOptionPane.showMessageDialog(null, "Hai già sostenuto questo esame!");
-                return;
-            }
-
-            // Recuperiamo tutti gli appelli disponibili per quell'esame
-            String queryAppelli = "SELECT appello.id, appello.data FROM appello " +
+            String query = "SELECT appello.id, esame.nome AS nome_esame, appello.data " +
+                    "FROM appello " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
-                    "WHERE esame.nome = ?";
+                    "WHERE appello.id NOT IN ( " +
+                    "SELECT appello_fk FROM esito WHERE studente_fk = ? " +
+                    "UNION " +
+                    "SELECT appello_fk FROM prenotazione WHERE studente_fk = ?)";
 
-            statement = conn.prepareStatement(queryAppelli);
-            statement.setString(1, nome_esame);
+            statement = conn.prepareStatement(query);
+            statement.setString(1, matricola);
+            statement.setString(2, matricola);
             rs = statement.executeQuery();
-            boolean appelli_trovati = false;
-            StringBuilder appelli = new StringBuilder("Appelli disponibili:\n");
+
+            JPanel appelliPanel = new JPanel();
+            appelliPanel.setLayout(new BoxLayout(appelliPanel, BoxLayout.Y_AXIS));
+            boolean ciSonoAppelli = false;
+
             while (rs.next()) {
-                appelli_trovati = true;
-                appelli.append(" - Id: ").append(rs.getString("id")).append(" | Data: ")
-                        .append(rs.getString("data")).append("\n");
+                ciSonoAppelli = true;
+                String idAppello = rs.getString("id");
+                String nomeEsame = rs.getString("nome_esame");
+                String data = rs.getString("data");
+
+                String label = nomeEsame + " | Data: " + data;
+                JButton appelloButton = new JButton(label);
+
+                appelloButton.addActionListener(e -> {
+                    int scelta = JOptionPane.showConfirmDialog(null,
+                            "Vuoi prenotarti all'appello di " + nomeEsame + " del " + data + "?",
+                            "Conferma Prenotazione",
+                            JOptionPane.YES_NO_OPTION);
+
+                    if (scelta == JOptionPane.YES_OPTION) {
+                        Connection newConn = null;
+                        PreparedStatement insertStmt = null;
+                        PreparedStatement updateStmt = null;
+
+                        try {
+                            newConn = DriverManager.getConnection(
+                                    "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
+
+                            String queryInsert = "INSERT INTO Prenotazione (appello_fk, studente_fk) VALUES (?, ?)";
+                            insertStmt = newConn.prepareStatement(queryInsert);
+                            insertStmt.setString(1, idAppello);
+                            insertStmt.setString(2, matricola);
+                            insertStmt.executeUpdate();
+
+                            String queryUpdate = "UPDATE appello SET num_prenotati = num_prenotati + 1 WHERE id = ?";
+                            updateStmt = newConn.prepareStatement(queryUpdate);
+                            updateStmt.setString(1, idAppello);
+                            updateStmt.executeUpdate();
+
+                            JOptionPane.showMessageDialog(null, "Prenotazione effettuata con successo!");
+
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(null, "Errore durante la prenotazione: " + ex.getMessage());
+                            ex.printStackTrace();
+                        } finally {
+                            try {
+                                if (insertStmt != null) insertStmt.close();
+                                if (updateStmt != null) updateStmt.close();
+                                if (newConn != null) newConn.close();
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+                appelliPanel.add(appelloButton);
             }
 
-            if (!appelli_trovati) {
-                JOptionPane.showMessageDialog(null,"Non ci sono ancora appelli disponibili per questo esame.");
-                return;
+            if (ciSonoAppelli) {
+                JDialog dialog = new JDialog();
+                dialog.setTitle("Appelli Prenotabili");
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.getContentPane().add(new JScrollPane(appelliPanel));
+                dialog.setSize(400, 300);
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Non ci sono appelli al momento.");
             }
 
-            String appelliDisplay = appelli.toString();
-            String idAppelloScelto = (String) JOptionPane.showInputDialog(null, appelliDisplay,
-                    "Seleziona l'appello (ID):", JOptionPane.QUESTION_MESSAGE);
-
-            // Controlliamo il numero di prenotazioni già effettuate per questo appello
-
-            String queryNumPrenotati = "SELECT num_prenotati FROM appello WHERE id = ?";
-
-            statement = conn.prepareStatement(queryNumPrenotati);
-            statement.setString(1, idAppelloScelto);
-            rs = statement.executeQuery();
-
-            int numPrenotati = 0;
-            if (rs.next()) {
-                numPrenotati = rs.getInt("num_prenotati");
-            }
-
-            if (numPrenotati >= 50) {
-                JOptionPane.showMessageDialog(null,"Il numero massimo di prenotazioni per questo appello è stato raggiunto.");
-                return;
-            }
-
-            // Verifichiamo se lo studente è già prenotato
-            String queryCheck = "SELECT * FROM Prenotazione WHERE appello_fk = ? AND studente_fk = ?";
-            statement = conn.prepareStatement(queryCheck);
-            statement.setString(1, idAppelloScelto);
-            statement.setString(2, matricola);
-            rs = statement.executeQuery();
-
-            if (rs.next()) {
-                JOptionPane.showMessageDialog(null,"Sei già prenotato per questo appello!");
-                return;
-            }
-
-            // Inseriamo la prenotazione nella tabella Prenotazioni
-            String queryInsert = "INSERT INTO Prenotazione (appello_fk, studente_fk) VALUES (?, ?)";
-            statement = conn.prepareStatement(queryInsert);
-            statement.setString(1, idAppelloScelto);
-            statement.setString(2, matricola);
-            statement.executeUpdate();
-
-            // Aggiorniamo il numero di prenotati nell'appello
-            String queryUpdateNumPrenotati = "UPDATE appello SET num_prenotati = num_prenotati + 1 WHERE id = ?";
-            statement = conn.prepareStatement(queryUpdateNumPrenotati);
-            statement.setString(1, idAppelloScelto);
-            statement.executeUpdate();
-
-            JOptionPane.showMessageDialog(null,"Prenotazione effettuata con successo!");
         } catch (SQLException e) {
-            System.out.println("Errore: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Errore: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null)
-                    rs.close();
-                if (statement != null)
-                    statement.close();
-                if (conn != null)
-                    conn.close();
+                if (rs != null) rs.close();
+                if (statement != null) statement.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 
     public void valutaVoto(String matricola) {
         mediator.gestisciNotifica(matricola);
