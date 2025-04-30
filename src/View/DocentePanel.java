@@ -21,7 +21,7 @@ public class DocentePanel extends JPanel{
         setLayout(new BorderLayout(20, 0));
         JPanel panel = new JPanel(new GridBagLayout());
         docenteButton.setFont(new Font("Arial",Font.PLAIN,14));
-        docenteButton.setPreferredSize(new Dimension(130,60));
+        docenteButton.setPreferredSize(new Dimension(170,100));
         panel.add(docenteButton);
         add(panel);
     }
@@ -30,7 +30,7 @@ public class DocentePanel extends JPanel{
         return docenteButton;
     }
 
-    public void showDocenteFrame(JFrame frame){
+    public void showDocenteFrame(){
         if (App.docenteFrame == null) {
             App.docenteFrame = new JFrame("Login Docente");
             App.docenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -70,7 +70,7 @@ public class DocentePanel extends JPanel{
 
             gbc.gridx = 1;
             gbc.gridy = 1;
-            JPasswordField passwordField = new JPasswordField(15);
+            passwordField = new JPasswordField(15);
             loginPanel.add(passwordField, gbc);
 
             // Pulsante login

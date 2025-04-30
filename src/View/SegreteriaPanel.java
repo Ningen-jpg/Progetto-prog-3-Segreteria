@@ -23,12 +23,12 @@ public class SegreteriaPanel extends JPanel {
         setLayout(new BorderLayout(20, 0));
         JPanel panel = new JPanel(new GridBagLayout());
         segreteriaButton.setFont(new Font("Arial",Font.PLAIN,14));
-        segreteriaButton.setPreferredSize(new Dimension(130,60));
+        segreteriaButton.setPreferredSize(new Dimension(170,100));
         panel.add(segreteriaButton);
         add(panel, BorderLayout.WEST);
     }
 
-    public void showSegreteriaFrame(JFrame frame) {
+    public void showSegreteriaFrame() {
         if (App.segreteriaFrame == null) {
             App.segreteriaFrame = new JFrame("Login Segreteria");
             App.segreteriaFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

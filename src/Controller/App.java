@@ -13,7 +13,6 @@ import Strategy.LoginUtente;
 import View.DocentePanel;
 import View.SegreteriaPanel;
 import View.StudentePanel;
-
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -45,13 +44,14 @@ public class App {
     private static Utente segreteriaCorrente = null;
 
     public static void main(String[] args) {
+        //Questo blocco serve per rendere l'interfaccia grafica simile a quella del sistema operativo
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Creo la finestra principale
+        // Creo il frame principale
         mainFrame = new JFrame("Segreteria studenti");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(800, 500);
@@ -65,7 +65,7 @@ public class App {
 
         // Titolo
         JLabel titleLabel = new JLabel("Segreteria studenti", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Pannello per i pulsanti
@@ -83,12 +83,13 @@ public class App {
         buttonPanel.add(separator, BorderLayout.CENTER);
 
         // Pannello destro per i pulsanti Model.Docente e Model.Studente
-        JPanel rightPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel rightPanel = new JPanel(new GridLayout(1, 2, 80, 0));
         docentePanel = new DocentePanel();
         studentePanel = new StudentePanel();
         rightPanel.add(docentePanel);
         rightPanel.add(studentePanel);
 
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 40));
         buttonPanel.add(rightPanel, BorderLayout.EAST);
 
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
@@ -106,9 +107,6 @@ public class App {
 
         // Aggiungo il pannello alla finestra
         mainFrame.getContentPane().add(mainPanel);
-
-        //mainFrame.pack(); //effettua il resize automatico in base al contenuto, brutto
-
         mainFrame.setVisible(true);
 
     }
@@ -302,76 +300,24 @@ public class App {
 
     // Metodi per aprire le finestre
     private static void openStudenteFrame() {
-        if (studenteFrame == null) {
-            studenteFrame = new JFrame("Login Studente");
-            studenteFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            studenteFrame.setSize(400, 300);
-            studenteFrame.setLocationRelativeTo(null);
+        studentePanel.showStudenteFrame();
+        studentePanel.getLoginButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String matricola = studentePanel.getMatricolaField().getText();
+                String password = new String(studentePanel.getPasswordField().getPassword());
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-            // Titolo
-            JLabel titleLabel = new JLabel("Area Studenti", SwingConstants.CENTER);
-            titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            panel.add(titleLabel, BorderLayout.NORTH);
-
-            // Pannello per il login
-            JPanel loginPanel = new JPanel();
-            loginPanel.setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-
-            // Campo matricola
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            loginPanel.add(new JLabel("Matricola:"), gbc);
-
-            gbc.gridx = 1;
-            gbc.gridy = 0;
-            JTextField matricolaField = new JTextField(15);
-            loginPanel.add(matricolaField, gbc);
-
-            // Campo password
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            loginPanel.add(new JLabel("Password:"), gbc);
-
-            gbc.gridx = 1;
-            gbc.gridy = 1;
-            JPasswordField passwordField = new JPasswordField(15);
-            loginPanel.add(passwordField, gbc);
-
-            // Pulsante login
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            JButton loginButton = new JButton("Login");
-            loginButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String matricola = matricolaField.getText();
-                    String password = new String(passwordField.getPassword());
-
-                    if (loginStudente(matricola, password)) {
-                        // Login riuscito, mostra le funzionalità dello studente
-                        showStudenteFunctionality(matricola);
-                    }
+                if (loginStudente(matricola, password)) {
+                    // Login riuscito, mostra le funzionalità dello studente
+                    showStudenteFunctionality(matricola);
                 }
-            });
-            loginPanel.add(loginButton, gbc);
-
-            panel.add(loginPanel, BorderLayout.CENTER);
-            studenteFrame.add(panel);
-        }
+            }
+        });
         studenteFrame.setVisible(true);
     }
 
     private static void openDocenteFrame() {
-        docentePanel.showDocenteFrame(docenteFrame);
+        docentePanel.showDocenteFrame();
 
         docentePanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
@@ -389,7 +335,7 @@ public class App {
     }
 
     private static void openSegreteriaFrame() {
-        segreteriaPanel.showSegreteriaFrame(segreteriaFrame);
+        segreteriaPanel.showSegreteriaFrame();
 
         segreteriaPanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
@@ -408,13 +354,16 @@ public class App {
 
     // Metodi per mostrare le funzionalità dopo il login
     private static void showStudenteFunctionality(String matricola) {
+        studentePanel.getPanel().removeAll();
+        studentePanel.getButtonPanel().removeAll();
+
         // Crea l'istanza dello studente usando il Factory
         studenteCorrente = ConcreteUtenteFactory.getUtente("studente", matricola, "", "", "");
 
         // Rimuovo il pannello di login
         studenteFrame.getContentPane().removeAll();
 
-        // Creo un nuovo pannello per le funzionalità
+        // Layout principale
         studentePanel.getPanel().setLayout(new BorderLayout());
         studentePanel.getPanel().setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -422,78 +371,71 @@ public class App {
         studentePanel.getTitleLabel().setFont(new Font("Arial", Font.BOLD, 18));
         studentePanel.getPanel().add(studentePanel.getTitleLabel(), BorderLayout.NORTH);
 
-        // Pannello per i pulsanti delle funzionalità
+        // Pannello centrale con i pulsanti principali
         studentePanel.getButtonPanel().setLayout(new GridLayout(3, 1, 10, 10));
 
-        // Pulsante Prenotazione
-        studentePanel.getPrenotazioneButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implementazione della prenotazione
-                if (studenteCorrente instanceof Studente) {
-                    ((Studente) studenteCorrente).effettuaPrenotazione(matricola);
-                } else {
-                    JOptionPane.showMessageDialog(studenteFrame,
-                            "Errore: utente non riconosciuto come studente",
-                            "Errore",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+        // Prenota Esame
+        studentePanel.getPrenotazioneButton().addActionListener(e -> {
+            if (studenteCorrente instanceof Studente) {
+                ((Studente) studenteCorrente).effettuaPrenotazione(matricola);
+            } else {
+                JOptionPane.showMessageDialog(studenteFrame,
+                        "Errore: utente non riconosciuto come studente",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         studentePanel.getButtonPanel().add(studentePanel.getPrenotazioneButton());
 
-        // Pulsante Gestione Notifiche
-        studentePanel.getNotificheButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Implementazione della gestione notifiche
-                if (studenteCorrente instanceof Studente) {
-                    ((Studente) studenteCorrente).valutaVoto(matricola);
-                } else {
-                    JOptionPane.showMessageDialog(studenteFrame,
-                            "Errore: utente non riconosciuto come studente",
-                            "Errore",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        studentePanel.getButtonPanel().add(studentePanel.getNotificheButton());
-
-        // Pulsante Effettua Test
-        studentePanel.getTestButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (studenteCorrente instanceof Studente) {
-                    ((Studente) studenteCorrente).effettuaTest();
-                } else {
-                    JOptionPane.showMessageDialog(studenteFrame,
-                            "Errore: utente non riconosciuto come studente",
-                            "Errore",
-                            JOptionPane.ERROR_MESSAGE);
-                }
+        // Effettua Test
+        studentePanel.getTestButton().addActionListener(e -> {
+            if (studenteCorrente instanceof Studente) {
+                ((Studente) studenteCorrente).effettuaTest();
+            } else {
+                JOptionPane.showMessageDialog(studenteFrame,
+                        "Errore: utente non riconosciuto come studente",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         studentePanel.getButtonPanel().add(studentePanel.getTestButton());
+
+        // Aggiunge il pannello con i pulsanti principali al centro
         studentePanel.getPanel().add(studentePanel.getButtonPanel(), BorderLayout.CENTER);
 
-        // Modifica il pulsante logout
-        studentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
-        studentePanel.getLogoutButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                effettuaLogout("studente", studenteFrame);
+        // Pannello inferiore con Notifiche (a sinistra) e Disconnetti (a destra)
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+
+        // Pulsante Notifiche
+        studentePanel.getNotificheButton().addActionListener(e -> {
+            if (studenteCorrente instanceof Studente) {
+                ((Studente) studenteCorrente).valutaVoto(matricola);
+            } else {
+                JOptionPane.showMessageDialog(studenteFrame,
+                        "Errore: utente non riconosciuto come studente",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
+        bottomPanel.add(studentePanel.getNotificheButton(), BorderLayout.WEST);
 
-        studentePanel.getLogoutPanel().add(studentePanel.getLogoutButton());
-        studentePanel.getPanel().add(studentePanel.getLogoutPanel(), BorderLayout.SOUTH);
+        // Pulsante Logout (Disconnetti)
+        studentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        studentePanel.getLogoutButton().addActionListener(e -> effettuaLogout("studente", studenteFrame));
+        bottomPanel.add(studentePanel.getLogoutButton(), BorderLayout.EAST);
 
+        // Aggiunge il pannello inferiore al pannello principale
+        studentePanel.getPanel().add(bottomPanel, BorderLayout.SOUTH);
+
+        // Mostra il tutto nel frame
         studenteFrame.add(studentePanel.getPanel());
         studenteFrame.revalidate();
         studenteFrame.repaint();
     }
 
     private static void showDocenteFunctionality(String id) {
+        docentePanel.getPanel().removeAll();
+        docentePanel.getButtonPanel().removeAll();
         // Crea l'istanza del docente usando il Factory
         docenteCorrente = ConcreteUtenteFactory.getUtente("docente", id, "", "", "");
         DocenteSubject docenteSubject = new DocenteSubject();
@@ -564,6 +506,9 @@ public class App {
     }
 
     private static void showSegreteriaFunctionality(String id) {
+        segreteriaPanel.getPanel().removeAll();
+        segreteriaPanel.getButtonPanel().removeAll();
+
         // Crea l'istanza della segreteria usando il Factory
         segreteriaCorrente = ConcreteUtenteFactory.getUtente("segreteria", id, "", "", "");
 
