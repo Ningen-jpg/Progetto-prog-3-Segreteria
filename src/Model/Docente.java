@@ -116,7 +116,6 @@ public class Docente extends Utente {
     SCELTA PROGETTUALE
      */
     public void inserisci_voto(DocenteSubject docenteSubject) {
-
         mediator.inviaVoto(docenteSubject, this.getID());
     }
 }

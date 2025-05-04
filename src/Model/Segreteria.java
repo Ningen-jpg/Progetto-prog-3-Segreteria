@@ -182,7 +182,7 @@ public class Segreteria extends Utente {
     }
 
     public static boolean addStudente(String matricola, String nome, String cognome,
-            String dataNascita, String password, String residenza, boolean tasse) {
+            String dataNascita, String password, String residenza, boolean tasse, String corsoDiLaurea) {
         Connection connection = null;
         PreparedStatement statement = null;
 
@@ -190,9 +190,9 @@ public class Segreteria extends Utente {
             connection = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, residenza, tasse, password) "
+            String query = "INSERT INTO studente (matricola, nome, cognome, data_nascita, residenza, tasse, password, corsodilaurea_fk) "
                     +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
                     "ON CONFLICT (matricola) DO NOTHING";
 
             statement = connection.prepareStatement(query);
@@ -203,6 +203,7 @@ public class Segreteria extends Utente {
             statement.setString(5, residenza);
             statement.setBoolean(6, tasse);
             statement.setString(7, password);
+            statement.setInt(8, Integer.parseInt(corsoDiLaurea));
 
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
@@ -243,7 +244,8 @@ public class Segreteria extends Utente {
                         rs.getString("cognome"),
                         rs.getDate("data_nascita"),
                         rs.getString("residenza"),
-                        rs.getBoolean("tasse")
+                        rs.getBoolean("tasse"),
+                        rs.getString("corsodilaurea_fk")
                 };
                 rows.add(row);
             }

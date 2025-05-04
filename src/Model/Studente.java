@@ -37,17 +37,22 @@ public class Studente extends Utente {
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
+            //Visualizzo solo gli appelli degli esami non ancora sostenuti (superati) del mio corso di studi
             String query = "SELECT appello.id, esame.nome AS nome_esame, appello.data " +
                     "FROM appello " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
-                    "WHERE appello.id NOT IN ( " +
-                    "SELECT appello_fk FROM esito WHERE studente_fk = ? " +
-                    "UNION " +
-                    "SELECT appello_fk FROM prenotazione WHERE studente_fk = ?)";
+                    "JOIN studente ON studente.matricola = ? " +
+                    "WHERE esame.corso_fk = studente.corsodilaurea_fk " +
+                    "AND appello.id NOT IN ( " +
+                    "    SELECT appello_fk FROM esito WHERE studente_fk = ? " +
+                    "    UNION " +
+                    "    SELECT appello_fk FROM prenotazione WHERE studente_fk = ?)";
 
             statement = conn.prepareStatement(query);
-            statement.setString(1, matricola);
-            statement.setString(2, matricola);
+            statement.setString(1, matricola); // per JOIN con studente
+            statement.setString(2, matricola); // per primo sottoquery
+            statement.setString(3, matricola); // per secondo sottoquery
+
             rs = statement.executeQuery();
 
             JPanel appelliPanel = new JPanel();
@@ -104,6 +109,10 @@ public class Studente extends Utente {
                             }
                         }
                     }
+                    appelliPanel.remove(appelloButton);
+                    // Aggiorna la UI
+                    appelliPanel.revalidate();
+                    appelliPanel.repaint();
                 });
 
                 appelliPanel.add(appelloButton);
@@ -135,8 +144,6 @@ public class Studente extends Utente {
         }
     }
 
-
-
     public void valutaVoto(String matricola) {
         mediator.gestisciNotifica(matricola);
     }
@@ -163,7 +170,7 @@ public class Studente extends Utente {
             statement.setString(1, this.matricola);
             rs = statement.executeQuery();
 
-            JOptionPane.showMessageDialog(null,"Esami per cui sei prenotato:\n\n");
+            //JOptionPane.showMessageDialog(null,"Esami per cui sei prenotato:\n\n");
             JPanel pannelloPrenotazioni = new JPanel();
             pannelloPrenotazioni.setLayout(new BoxLayout(pannelloPrenotazioni, BoxLayout.Y_AXIS));
             boolean ciSonoPrenotazioni = false;
@@ -267,7 +274,7 @@ public class Studente extends Utente {
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
             }
-            else { JOptionPane.showMessageDialog(null,"Non ci sono notifiche");}
+            else { JOptionPane.showMessageDialog(null,"Non ci sono prenotazioni");}
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null,"Errore durante il test, riprova." + e.getMessage());
             e.printStackTrace();

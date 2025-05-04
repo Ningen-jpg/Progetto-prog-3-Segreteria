@@ -122,7 +122,8 @@ public class App {
                     studente[2], // cognome
                     studente[3], // data_nascita
                     studente[4], // residenza
-                    ((Boolean) studente[5]) ? "pagate" : "da pagare" // tasse
+                    ((Boolean) studente[5]) ? "pagate" : "da pagare", // tasse
+                    studente[6] // corso di laurea
             };
             studentiTableModel.addRow(row);
         }
@@ -161,6 +162,7 @@ public class App {
         studentiTableModel.addColumn("Data di Nascita");
         studentiTableModel.addColumn("Residenza");
         studentiTableModel.addColumn("Tasse");
+        studentiTableModel.addColumn("Corso di Laurea");
 
         studentiTable = new JTable(studentiTableModel);
         JScrollPane scrollPane = new JScrollPane(studentiTable);
@@ -235,6 +237,13 @@ public class App {
         JCheckBox tasseCheckbox = new JCheckBox();
         formPanel.add(tasseCheckbox, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        formPanel.add(new JLabel("Corso di laurea:"), gbc);
+        gbc.gridx = 1;
+        JTextField corsoDiLaureaField = new JTextField(20);
+        formPanel.add(corsoDiLaureaField, gbc);
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("Aggiungi");
         addButton.addActionListener(e -> {
@@ -246,9 +255,10 @@ public class App {
             String password = new String(passwordField.getPassword()).trim();
             String residenza = residenzaField.getText().trim();
             boolean tassePagate = tasseCheckbox.isSelected();
+            String corsoDiLaurea = corsoDiLaureaField.getText().trim();
 
             if (matricola.isEmpty() || nome.isEmpty() || cognome.isEmpty() ||
-                    dataNascita.isEmpty() || password.isEmpty() || residenza.isEmpty()) {
+                    dataNascita.isEmpty() || password.isEmpty() || residenza.isEmpty() || corsoDiLaurea.isEmpty()) {
                 JOptionPane.showMessageDialog(dialog,
                         "Tutti i campi sono obbligatori",
                         "Errore",
@@ -256,7 +266,7 @@ public class App {
                 return;
             }
 
-            if (Segreteria.addStudente(matricola, nome, cognome, dataNascita, password, residenza, tassePagate)) {
+            if (Segreteria.addStudente(matricola, nome, cognome, dataNascita, password, residenza, tassePagate, corsoDiLaurea)) {
                 dialog.dispose();
                 refreshStudentiList();
                 JOptionPane.showMessageDialog(null,

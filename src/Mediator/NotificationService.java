@@ -22,29 +22,20 @@ public class NotificationService implements Mediator {
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://programmazione3-programmazione3.j.aivencloud.com:19840/defaultdb?ssl=require&user=avnadmin&password=AVNS_Y5gjymttI8vcX96hEei");
 
-            // Recuperiamo il nome e cognome del docente loggato
-            String queryDocente = "SELECT nome, cognome FROM docente WHERE id = ?";
-            statement = conn.prepareStatement(queryDocente);
-            statement.setString(1, docenteID);
-            rs = statement.executeQuery();
-
-            if (rs.next()) {
-                String nomeDocente = rs.getString("nome");
-                String cognomeDocente = rs.getString("cognome");
-            }
-
             // Recuperiamo tutti gli esami per questo docente
             String queryEsamiDocente = "SELECT esame.id, esame.nome FROM esame WHERE esame.docente_fk = ?";
             statement = conn.prepareStatement(queryEsamiDocente);
             statement.setString(1, docenteID);
             rs = statement.executeQuery();
 
-            StringBuilder esamiList = new StringBuilder("Esami disponibili per il docente:\n");
+            StringBuilder esamiList = new StringBuilder("\n");
             while (rs.next()) {
                 String idEsame = rs.getString("id");
                 String nomeEsameDb = rs.getString("nome");
-                esamiList.append(" - ID Esame: ").append(idEsame).append(" | Nome: ").append(nomeEsameDb).append(" \n");
+                esamiList.append(" - ID Esame: ").append(idEsame).append(" | Nome: ").append(nomeEsameDb).append("\n");
             }
+            rs.close();
+            statement.close();
 
             if (esamiList.length() == 0) {
                 JOptionPane.showMessageDialog(null, "Nessun esame trovato per questo docente.", "Errore",
@@ -52,10 +43,9 @@ public class NotificationService implements Mediator {
                 return;
             }
 
-            // Mostra gli esami in una finestra di dialogo
+            // Mostra gli esami
             String esamiDisplay = esamiList.toString();
-            String esameSelezionato = (String) JOptionPane.showInputDialog(null, esamiDisplay, "Seleziona Esame",
-                    JOptionPane.QUESTION_MESSAGE);
+            String esameSelezionato = JOptionPane.showInputDialog("Inserisci l'ID dell'esame tra quelli elencati:\n" + esamiDisplay);
 
             if (esameSelezionato == null || esameSelezionato.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Operazione annullata", "Info", JOptionPane.INFORMATION_MESSAGE);
@@ -64,64 +54,68 @@ public class NotificationService implements Mediator {
 
             // Recuperiamo gli appelli per l'esame selezionato
             String queryAppelli = "SELECT appello.id AS id_appello, appello.data " +
-                    "FROM appello " +
-                    "WHERE appello.esame_fk = ? " +
-                    "ORDER BY appello.data DESC";
+                    "FROM appello WHERE appello.esame_fk = ? ORDER BY appello.data DESC";
             statement = conn.prepareStatement(queryAppelli);
             statement.setString(1, esameSelezionato);
             rs = statement.executeQuery();
 
-            String idAppello = null;  // inizializza la variabile
-
+            String idAppello = null;
             while (rs.next()) {
-                idAppello = rs.getString("id_appello");
+                idAppello = rs.getString("id_appello"); // prendi l'ultimo (più recente)
+            }
+            rs.close();
+            statement.close();
+
+            if (idAppello == null) {
+                JOptionPane.showMessageDialog(null, "Nessun appello trovato per questo esame.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
-            // Verifica se il docente loggato è effettivamente il docente di questo esame
+            // Verifica se il docente è effettivamente quello dell’esame
             String queryDocenteAppello = "SELECT docente_fk FROM esame WHERE id = ?";
             statement = conn.prepareStatement(queryDocenteAppello);
             statement.setString(1, esameSelezionato);
             rs = statement.executeQuery();
-
             if (rs.next()) {
                 String docente_fk = rs.getString("docente_fk");
                 if (!docente_fk.equals(docenteID)) {
+                    rs.close();
+                    statement.close();
                     System.out.println("Non sei il docente di questo esame!");
                     return;
                 }
             }
-
-            // Prima verifichiamo se esistono esiti per questo appello
-            String queryVerificaEsiti = "SELECT COUNT(*) as total FROM esito WHERE appello_fk = ? AND voto = '0'";
-            statement = conn.prepareStatement(queryVerificaEsiti);
-            statement.setString(1, idAppello);
-            rs = statement.executeQuery();
+            rs.close();
+            statement.close();
 
             // Visualizziamo gli esiti senza voto
-            String queryEsiti = "SELECT studente.matricola, studente.nome, appello.data, esame.nome AS nome_esame " +
+            String queryEsiti = "SELECT studente.matricola, studente.nome, studente.cognome, appello.id AS id_appello, appello.data, esame.nome AS nome_esame " +
                     "FROM esito " +
                     "JOIN studente ON esito.studente_fk = studente.matricola " +
                     "JOIN appello ON esito.appello_fk = appello.id " +
                     "JOIN esame ON appello.esame_fk = esame.id " +
-                    "WHERE esito.voto = '0' AND esito.appello_fk = ?";
+                    "WHERE esito.voto = '0' AND UPPER(esame.id) = ? AND esame.docente_fk = ?";
+
             statement = conn.prepareStatement(queryEsiti);
-            statement.setString(1, idAppello);
+            statement.setString(1, esameSelezionato);
+            statement.setString(2, docenteID);
             rs = statement.executeQuery();
+
 
             String dataTrovata = null;
             String esameTrovato = null;
-
             boolean trovatiStudenti = false;
-            StringBuilder studentiList = new StringBuilder("Studenti senza voto:\n");
+            StringBuilder studentiList = new StringBuilder("\n");
             while (rs.next()) {
                 trovatiStudenti = true;
-                studentiList.append(" - Matricola: ").append(rs.getString("matricola")).append(" | Nome: ")
-                        .append(rs.getString("nome")).append("\n");
+                studentiList.append(" - ").append(rs.getString("matricola"))
+                        .append(" ").append(rs.getString("nome")).append(" ").append(rs.getString("cognome")).append("\n\n");
 
                 dataTrovata = rs.getString("data");
                 esameTrovato = rs.getString("nome_esame");
             }
-
+            rs.close();
+            statement.close();
 
             if (!trovatiStudenti) {
                 JOptionPane.showMessageDialog(null, "Nessuno studente trovato senza voto per questo appello.", "Errore",
@@ -129,42 +123,44 @@ public class NotificationService implements Mediator {
                 return;
             }
 
-            // Mostra gli studenti senza voto
+            // Mostra gli studenti
             String studentiDisplay = studentiList.toString();
-            String matricolaSelezionata = (String) JOptionPane.showInputDialog(null, studentiDisplay,
-                    "Seleziona Model.Studente", JOptionPane.QUESTION_MESSAGE);
-
+            String matricolaSelezionata = JOptionPane.showInputDialog("Inserisci la matricola dello studente tra quelli elencati:\n" + studentiDisplay);
             if (matricolaSelezionata == null || matricolaSelezionata.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Operazione annullata", "Info", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            // Aggiorniamo il voto nella tabella esito
-            String updateEsito = "UPDATE esito SET voto = ? WHERE studente_fk = ? AND appello_fk = ?";
-            String voto = (String) JOptionPane.showInputDialog(null, "Inserisci il voto dello studente:", JOptionPane.QUESTION_MESSAGE);
+            // Chiedi voto
+            String voto = JOptionPane.showInputDialog("Inserisci il voto dello studente:");
+            if (voto == null || voto.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Inserimento voto annullato", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
 
+            // 5. Aggiorna il voto
+            String updateEsito = "UPDATE esito SET voto = ? WHERE studente_fk = ? AND appello_fk = ?";
             statement = conn.prepareStatement(updateEsito);
             statement.setString(1, voto);
             statement.setString(2, matricolaSelezionata);
             statement.setString(3, idAppello);
             statement.executeUpdate();
+            statement.close();
 
-            JOptionPane.showMessageDialog(null, "Voto registrato con successo!", "Successo",
-                    JOptionPane.INFORMATION_MESSAGE);
-            Date d = (Date.valueOf(dataTrovata));
+            JOptionPane.showMessageDialog(null, "Voto registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
-            // Salva la notifica nel database
+            // 6. Salva la notifica
             String insertNotifica = "INSERT INTO Notifica (id_notifica, studente_fk, voto, data, nome_esame) VALUES (?, ?, ?, ?, ?)";
             statement = conn.prepareStatement(insertNotifica);
-
             statement.setString(1, idAppello);
             statement.setString(2, matricolaSelezionata);
             statement.setString(3, voto);
-            statement.setDate(4, d);
+            statement.setDate(4, Date.valueOf(dataTrovata));
             statement.setString(5, esameTrovato);
             statement.executeUpdate();
+            statement.close();
 
-            // Observer.Notifica lo Model.Studente con Observer (per notifiche in tempo reale)
+            // 7. Notifica con Observer
             docenteSubject.notifyObservers(matricolaSelezionata, esameTrovato, voto);
 
         } catch (SQLException e) {
@@ -172,12 +168,17 @@ public class NotificationService implements Mediator {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null)
-                    rs.close();
-                if (statement != null)
-                    statement.close();
-                if (conn != null)
-                    conn.close();
+                if (rs != null) rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -277,6 +278,9 @@ public class NotificationService implements Mediator {
                             ex.printStackTrace();
                         }
                     }
+                    notifichePanel.remove(notificaButton);
+                    notifichePanel.revalidate();
+                    notifichePanel.repaint();
                 });
 
                 notifichePanel.add(notificaButton);
