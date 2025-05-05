@@ -138,7 +138,7 @@ public class NotificationService implements Mediator {
                 return;
             }
 
-            // 5. Aggiorna il voto
+            // Aggiorna il voto
             String updateEsito = "UPDATE esito SET voto = ? WHERE studente_fk = ? AND appello_fk = ?";
             statement = conn.prepareStatement(updateEsito);
             statement.setString(1, voto);
@@ -149,7 +149,7 @@ public class NotificationService implements Mediator {
 
             JOptionPane.showMessageDialog(null, "Voto registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
-            // 6. Salva la notifica
+            // Salva la notifica
             String insertNotifica = "INSERT INTO Notifica (id_notifica, studente_fk, voto, data, nome_esame) VALUES (?, ?, ?, ?, ?)";
             statement = conn.prepareStatement(insertNotifica);
             statement.setString(1, idAppello);
@@ -160,7 +160,7 @@ public class NotificationService implements Mediator {
             statement.executeUpdate();
             statement.close();
 
-            // 7. Notifica con Observer
+            // Notifica con Observer
             docenteSubject.notifyObservers(matricolaSelezionata, esameTrovato, voto);
 
         } catch (SQLException e) {

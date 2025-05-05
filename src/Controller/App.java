@@ -101,8 +101,17 @@ public class App {
         creditsLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         mainPanel.add(creditsLabel, BorderLayout.SOUTH);
 
+        for (ActionListener al : segreteriaPanel.getSegreteriaButton().getActionListeners()) {
+            segreteriaPanel.getSegreteriaButton().removeActionListener(al);
+        }
         segreteriaPanel.getSegreteriaButton().addActionListener(e -> openSegreteriaFrame());
+        for (ActionListener al : docentePanel.getDocenteButton().getActionListeners()) {
+            docentePanel.getDocenteButton().removeActionListener(al);
+        }
         docentePanel.getDocenteButton().addActionListener(e -> openDocenteFrame());
+        for (ActionListener al : studentePanel.getStudenteButton().getActionListeners()) {
+            docentePanel.getDocenteButton().removeActionListener(al);
+        }
         studentePanel.getStudenteButton().addActionListener(e -> openStudenteFrame());
 
         // Aggiungo il pannello alla finestra
@@ -144,6 +153,9 @@ public class App {
 
         // Pulsante per aggiungere uno studente
         JButton addButton = new JButton("Inserisci un nuovo studente");
+        for (ActionListener al : addButton.getActionListeners()) {
+            addButton.removeActionListener(al);
+        }
         addButton.addActionListener(e -> mostraDialogAggiungiStudente());
         topPanel.add(addButton);
 
@@ -246,6 +258,9 @@ public class App {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("Aggiungi");
+        for (ActionListener al : addButton.getActionListeners()) {
+            addButton.removeActionListener(al);
+        }
         addButton.addActionListener(e -> {
             // Validazione dei campi
             String matricola = matricolaField.getText().trim();
@@ -282,6 +297,9 @@ public class App {
         });
 
         JButton cancelButton = new JButton("Annulla");
+        for (ActionListener al : cancelButton.getActionListeners()) {
+            cancelButton.removeActionListener(al);
+        }
         cancelButton.addActionListener(e -> dialog.dispose());
 
         buttonPanel.add(addButton);
@@ -311,6 +329,9 @@ public class App {
     // Metodi per aprire le finestre
     private static void openStudenteFrame() {
         studentePanel.showStudenteFrame();
+        for (ActionListener al : studentePanel.getLoginButton().getActionListeners()) {
+            studentePanel.getLoginButton().removeActionListener(al);
+        }
         studentePanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -328,7 +349,9 @@ public class App {
 
     private static void openDocenteFrame() {
         docentePanel.showDocenteFrame();
-
+        for (ActionListener al : docentePanel.getLoginButton().getActionListeners()) {
+            docentePanel.getLoginButton().removeActionListener(al);
+        }
         docentePanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -346,7 +369,9 @@ public class App {
 
     private static void openSegreteriaFrame() {
         segreteriaPanel.showSegreteriaFrame();
-
+        for (ActionListener al : segreteriaPanel.getLoginButton().getActionListeners()) {
+            segreteriaPanel.getLoginButton().removeActionListener(al);
+        }
         segreteriaPanel.getLoginButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -385,6 +410,9 @@ public class App {
         studentePanel.getButtonPanel().setLayout(new GridLayout(3, 1, 10, 10));
 
         // Prenota Esame
+        for (ActionListener al : studentePanel.getPrenotazioneButton().getActionListeners()) {
+            studentePanel.getPrenotazioneButton().removeActionListener(al);
+        }
         studentePanel.getPrenotazioneButton().addActionListener(e -> {
             if (studenteCorrente instanceof Studente) {
                 ((Studente) studenteCorrente).effettuaPrenotazione(matricola);
@@ -398,6 +426,9 @@ public class App {
         studentePanel.getButtonPanel().add(studentePanel.getPrenotazioneButton());
 
         // Effettua Test
+        for (ActionListener al : studentePanel.getTestButton().getActionListeners()) {
+            studentePanel.getTestButton().removeActionListener(al);
+        }
         studentePanel.getTestButton().addActionListener(e -> {
             if (studenteCorrente instanceof Studente) {
                 ((Studente) studenteCorrente).effettuaTest();
@@ -431,6 +462,10 @@ public class App {
 
         // Pulsante Logout (Disconnetti)
         studentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        for (ActionListener al : studentePanel.getLogoutButton().getActionListeners()) {
+            studentePanel.getLogoutButton().removeActionListener(al);
+        }
+
         studentePanel.getLogoutButton().addActionListener(e -> effettuaLogout("studente", studenteFrame));
         bottomPanel.add(studentePanel.getLogoutButton(), BorderLayout.EAST);
 
@@ -462,6 +497,11 @@ public class App {
 
         // Pannello per i pulsanti delle funzionalità
         docentePanel.getButtonPanel().setLayout(new GridLayout(2, 1, 10, 10));
+
+        // Pulizia actionListner
+        for (ActionListener al : docentePanel.getAppelloButton().getActionListeners()) {
+            docentePanel.getAppelloButton().removeActionListener(al);
+        }
 
         // Pulsante Inserisci Appello
         docentePanel.getAppelloButton().addActionListener(new ActionListener() {
@@ -500,6 +540,10 @@ public class App {
 
         // Modifica il pulsante logout
         docentePanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        for (ActionListener al : docentePanel.getLogoutButton().getActionListeners()) {
+            docentePanel.getLogoutButton().removeActionListener(al);
+        }
+
         docentePanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -581,6 +625,10 @@ public class App {
 
         // Modifica il pulsante logout
         segreteriaPanel.getLogoutButton().setFont(new Font("Arial", Font.PLAIN, 14));
+        for (ActionListener al : segreteriaPanel.getLogoutButton().getActionListeners()) {
+            segreteriaPanel.getLogoutButton().removeActionListener(al);
+        }
+
         segreteriaPanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
