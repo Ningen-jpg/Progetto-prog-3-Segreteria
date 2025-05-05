@@ -448,6 +448,9 @@ public class App {
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
         // Pulsante Notifiche
+        for (ActionListener al : studentePanel.getNotificheButton().getActionListeners()) {
+            studentePanel.getNotificheButton().removeActionListener(al);
+        }
         studentePanel.getNotificheButton().addActionListener(e -> {
             if (studenteCorrente instanceof Studente) {
                 ((Studente) studenteCorrente).valutaVoto(matricola);
@@ -465,7 +468,9 @@ public class App {
         for (ActionListener al : studentePanel.getLogoutButton().getActionListeners()) {
             studentePanel.getLogoutButton().removeActionListener(al);
         }
-
+        for (ActionListener al : studentePanel.getLogoutButton().getActionListeners()) {
+            studentePanel.getLogoutButton().removeActionListener(al);
+        }
         studentePanel.getLogoutButton().addActionListener(e -> effettuaLogout("studente", studenteFrame));
         bottomPanel.add(studentePanel.getLogoutButton(), BorderLayout.EAST);
 
@@ -504,6 +509,9 @@ public class App {
         }
 
         // Pulsante Inserisci Appello
+        for (ActionListener al : docentePanel.getAppelloButton().getActionListeners()) {
+            docentePanel.getAppelloButton().removeActionListener(al);
+        }
         docentePanel.getAppelloButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -519,7 +527,9 @@ public class App {
             }
         });
         docentePanel.getButtonPanel().add(docentePanel.getAppelloButton());
-
+        for (ActionListener al : docentePanel.getVotoButton().getActionListeners()) {
+            docentePanel.getVotoButton().removeActionListener(al);
+        }
         // Pulsante Inserisci Voto
         docentePanel.getVotoButton().addActionListener(new ActionListener() {
             @Override
@@ -543,7 +553,9 @@ public class App {
         for (ActionListener al : docentePanel.getLogoutButton().getActionListeners()) {
             docentePanel.getLogoutButton().removeActionListener(al);
         }
-
+        for (ActionListener al : docentePanel.getLogoutButton().getActionListeners()) {
+            docentePanel.getLogoutButton().removeActionListener(al);
+        }
         docentePanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -570,7 +582,9 @@ public class App {
         segreteriaFrame.getContentPane().removeAll();
 
         segreteriaPanel.showGestioneStudentiView();
-
+        for (ActionListener al : segreteriaPanel.getStudentiButton().getActionListeners()) {
+            segreteriaPanel.getStudentiButton().removeActionListener(al);
+        }
         segreteriaPanel.getStudentiButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -580,7 +594,9 @@ public class App {
         segreteriaPanel.getButtonPanel().add(segreteriaPanel.getStudentiButton());
 
         // Pulsante Visualizza Informazioni Studente
-
+        for (ActionListener al : segreteriaPanel.getInfoStudenteButton().getActionListeners()) {
+            segreteriaPanel.getInfoStudenteButton().removeActionListener(al);
+        }
         segreteriaPanel.getInfoStudenteButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -595,6 +611,9 @@ public class App {
         segreteriaPanel.getButtonPanel().add(segreteriaPanel.getInfoStudenteButton());
 
         // Pulsante Visualizza Esiti Test per Corso
+        for (ActionListener al : segreteriaPanel.getEsitiTestButton().getActionListeners()) {
+            segreteriaPanel.getEsitiTestButton().removeActionListener(al);
+        }
         segreteriaPanel.getEsitiTestButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -608,6 +627,9 @@ public class App {
         segreteriaPanel.getButtonPanel().add(segreteriaPanel.getEsitiTestButton());
 
         // Pulsante Visualizza Esiti per Corso di Laurea
+        for (ActionListener al : segreteriaPanel.getEsitiCorsoButton().getActionListeners()) {
+            segreteriaPanel.getEsitiCorsoButton().removeActionListener(al);
+        }
         segreteriaPanel.getEsitiCorsoButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -629,6 +651,9 @@ public class App {
             segreteriaPanel.getLogoutButton().removeActionListener(al);
         }
 
+        for (ActionListener al : segreteriaPanel.getLogoutButton().getActionListeners()) {
+            segreteriaPanel.getLogoutButton().removeActionListener(al);
+        }
         segreteriaPanel.getLogoutButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
